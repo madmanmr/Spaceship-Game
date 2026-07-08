@@ -12,6 +12,7 @@ from Spaceship import Ship1
 from settings import *
 import sys
 from asteroids import Asteroid
+from lasers import Laser
 
 pg.init()
 
@@ -27,6 +28,8 @@ PLAYING = "playing"
 GAME_OVER = "game_over"
 state = MENU
 
+keys = pg.key.get_pressed()
+
 #vars
 prevMouseClick = False
 mousePos = pg.mouse.get_pos()
@@ -36,17 +39,19 @@ text_font = pg.font.SysFont(None, 35)
 level = 1
 leveldamage = [10,20,50]
 damage = leveldamage[level-1]
+laserLevel = 1
 health = 100
+hit_cooldown = 0
 
 #asteroid vars
 asteroids = []
+laser = []
 
 for i in range((level*5)):
     x = np.random.randint(0, SCREEN_WIDTH)
     y = np.random.randint(0, SCREEN_HEIGHT)
     angle = np.random.randint(0, 360)
     asteroids.append(Asteroid(x, y))
-
 #functions
 def Menu():
     screen.fill((15, 15, 30))
@@ -112,18 +117,28 @@ def asteroidsmainfunc():
             asteroid.y = SCREEN_HEIGHT
 
         asteroid.draw(screen)
+def laserdrawfunc():
+    for laser_obj in laser:
+        laser_obj.update()
+        laser_obj.draw(screen)
 def healthmainfunc():
-    global health, damage
+    global health, hit_cooldown, state
+
+    if hit_cooldown > 0:
+        hit_cooldown -= 1
 
     for asteroid in asteroids:
         dx = ship.x - asteroid.x
         dy = ship.y - asteroid.y
         distance = np.sqrt(dx ** 2 + dy ** 2)
 
-        if distance < ship.length + asteroid.radius:
+        if distance < ship.length + asteroid.radius and hit_cooldown == 0:
             health -= damage
-            damage = 0
+            hit_cooldown = 60
             print(health)
+
+            if health <= 0:
+                state = GAME_OVER
 running = True
 while running:
     dt = clock.tick(60)
@@ -137,6 +152,15 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_SPACE:
+                laser.append(Laser
+                             (
+                                ship.x + np.cos(ship.angle) * ship.length,
+                                ship.y + np.sin(ship.angle) * ship.length,
+                                ship.angle
+                            )
+                )
     if state == MENU:
         play_button = Menu()
 
@@ -154,7 +178,11 @@ while running:
 
         asteroidsmainfunc()
 
+        laserdrawfunc()
+
         healthmainfunc()
+        health_text = text_font.render(f"Health: {health}", True, WHITE)
+        screen.blit(health_text, (20, 20))
 
     elif state == GAME_OVER:
         screen.fill(BLACK)
