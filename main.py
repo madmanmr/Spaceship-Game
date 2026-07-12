@@ -223,7 +223,7 @@ while running:
             state = PLAYING
 
     elif state == PLAYING:
-        screen.fill(BACKGROUND_COLOR)
+        screen.fill(BACKGROUND_COLOR1)
 
         spaceshipmainfunc()
         asteroidsmainfunc()
