@@ -10,12 +10,13 @@ class Laser:
         self.y = y
         self.angle = angle
         self.speed = speed
+        self.points = []
 
     def update(self):
         self.x += np.cos(self.angle) * self.speed
         self.y += np.sin(self.angle) * self.speed
 
-    def draw(self, screen):
+    def get_points(self):
         half_width = self.width / 2
 
         front_x = self.x + np.cos(self.angle) * self.length
@@ -27,11 +28,13 @@ class Laser:
         offset_x = np.cos(self.angle + np.pi / 2) * half_width
         offset_y = np.sin(self.angle + np.pi / 2) * half_width
 
-        points = [
+        return [
             (front_x + offset_x, front_y + offset_y),
             (front_x - offset_x, front_y - offset_y),
             (back_x - offset_x, back_y - offset_y),
             (back_x + offset_x, back_y + offset_y)
         ]
 
-        pg.draw.polygon(screen, (114, 237, 223), points)
+    def draw(self, screen):
+        self.points = self.get_points()
+        pg.draw.polygon(screen, (114, 237, 223), self.points)

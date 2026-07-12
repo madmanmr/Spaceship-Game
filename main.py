@@ -137,14 +137,19 @@ def asteroidsmainfunc():
         destroyed = False
 
         for laser_obj in laser[:]:
-            dx = laser_obj.x - asteroid.x
-            dy = laser_obj.y - asteroid.y
-            distance = np.sqrt(dx ** 2 + dy ** 2)
+            for point in laser_obj.points:
+                dx = point[0] - asteroid.x
+                dy = point[1] - asteroid.y
 
-            if distance <= asteroid.radius:
-                asteroids.remove(asteroid)
-                laser.remove(laser_obj)
-                destroyed = True
+                distance = np.sqrt(dx ** 2 + dy ** 2)
+
+                if distance <= asteroid.radius:
+                    asteroids.remove(asteroid)
+                    laser.remove(laser_obj)
+                    destroyed = True
+                    break
+
+            if destroyed:
                 break
 
         if destroyed:
