@@ -24,8 +24,9 @@ clock = pg.time.Clock()
 ship = Ship1(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
 MENU = "menu"
+LEVEL_SELECTION = "level selection"
 PLAYING = "playing"
-GAME_OVER = "game_over"
+GAME_OVER = "game over"
 state = MENU
 
 #vars
@@ -79,15 +80,15 @@ def Menu():
     screen.fill((15, 15, 30))
 
     #buttons
-    play_button = pg.Rect(0, 0, 220, 70)
-    play_button.center = (SCREEN_WIDTH // 2, 400)
+    levelSelectionBut = pg.Rect(0, 0, 220, 70)
+    levelSelectionBut.center = (SCREEN_WIDTH // 2, 400)
 
     # Play button
     colour = (40, 180, 80)
-    if play_button.collidepoint(mousePos):
+    if levelSelectionBut.collidepoint(mousePos):
         colour = (60, 220, 100)
 
-    pg.draw.rect(screen, colour, play_button, border_radius=15)
+    pg.draw.rect(screen, colour, levelSelectionBut, border_radius=15)
 
     # Title
     title = title_font.render("SPACESHIP GAME", True, WHITE)
@@ -95,14 +96,19 @@ def Menu():
     subtitle = text_font.render("Press Play to Begin", True, (180, 180, 180))
 
     title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 150))
-    play_rect = play_text.get_rect(center=play_button.center)
+    play_rect = play_text.get_rect(center=levelSelectionBut.center)
     subtitle_rect = subtitle.get_rect(center=(SCREEN_WIDTH // 2, 220))
 
     screen.blit(title, title_rect)
     screen.blit(play_text, play_rect)
     screen.blit(subtitle, subtitle_rect)
 
-    return play_button
+    return levelSelectionBut
+def LevelSelection():
+    level1But = pg.Rect(0, 0, 220, 70)
+    Level2But = pg.Rect(0, 0, 220, 70)
+    Level3But = pg.Rect(0, 0, 220, 70)
+
 def spaceshipmainfunc():
     keys = pg.key.get_pressed()
 
@@ -217,11 +223,12 @@ while running:
                     laserSpeedCalc
                 ))
     if state == MENU:
-        play_button = Menu()
+        levelSelectionBut = Menu()
 
-        if mousePress and play_button.collidepoint(mousePos):
+        if mousePress and levelSelectionBut.collidepoint(mousePos):
             state = PLAYING
-
+    elif state == LEVEL_SELECTION:
+        LevelSelection()
     elif state == PLAYING:
         screen.fill(BACKGROUND_COLOR1)
 
