@@ -24,7 +24,7 @@ clock = pg.time.Clock()
 ship = Ship1(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
 MENU = "menu"
-LEVEL_SELECTION = "level selection"
+LEVEL_SELECT = "level selection"
 PLAYING = "playing"
 GAME_OVER = "game over"
 state = MENU
@@ -75,8 +75,8 @@ for i in range(asteroid_count):
     asteroid.speed = np.random.randint(asteroidCalcMin, asteroidCalcMax)
 
     asteroids.append(asteroid)
-#functions
-def Menu():
+#draw screens funcs
+def draw_menu():
     screen.fill((15, 15, 30))
 
     #buttons
@@ -104,11 +104,79 @@ def Menu():
     screen.blit(subtitle, subtitle_rect)
 
     return levelSelectionBut
-def LevelSelection():
+def draw_level_selection():
     level1But = pg.Rect(0, 0, 220, 70)
-    Level2But = pg.Rect(0, 0, 220, 70)
-    Level3But = pg.Rect(0, 0, 220, 70)
+    level2But = pg.Rect(0, 0, 220, 70)
+    level3But = pg.Rect(0, 0, 220, 70)
 
+    level1But.center = (100, 400)
+    level2But.center = (SCREEN_WIDTH // 2, 400)
+    level2But.center = (SCREEN_WIDTH - 100, 400)
+
+    #hovercolour
+    colour1 = (40, 180, 80)
+    if level1But.collidepoint(mousePos):
+        colour1 = (60, 220, 100)
+    colour2 = (40, 180, 80)
+    if level2But.collidepoint(mousePos):
+        colour2 = (60, 220, 100)
+    colour3 = (40, 180, 80)
+    if level3But.collidepoint(mousePos):
+        colour3 = (60, 220, 100)
+
+    #draw buttons
+    pg.draw.rect(screen, colour1, level1But, border_radius=15)
+    pg.draw.rect(screen, colour2, level2But, border_radius=15)
+    pg.draw.rect(screen, colour3, level3But, border_radius=15)
+
+    #text make
+    titleText = title_font.render("Select Level", True, WHITE)
+    one = text_font.render("1", True, BLACK)
+    two = text_font.render("2", True, BLACK)
+    three = text_font.render("3", True, BLACK)
+
+    #text rects
+    title_rect = titleText.get_rect(center=(SCREEN_WIDTH // 2, 150))
+    oneRect = one.get_rect(center=level1But.center)
+    twoRect = two.get_rect(center=level2But.center)
+    threeRect = three.get_rect(center=level2But.center)
+
+    #draw
+    screen.blit(titleText, title_rect)
+    screen.blit(one, oneRect)
+    screen.blit(two, twoRect)
+    screen.blit(three, threeRect)
+
+    #returns for event func
+    return level1But, level2But, level3But
+#handle events in different states seperately so not doing all in start of running loop
+def handle_menu_events(event, levelSelectionBut):
+    global state
+
+    if event.type == pg.MOUSEBUTTONDOWN:
+        if levelSelectionBut.collidepoint(pg.mouse.get_pos()):
+            state = LEVEL_SELECT
+def handle_level_selection_events(event, level1But, level2But, level3But):
+    global state, level
+
+    if event.type == pg.MOUSEBUTTONDOWN:
+        if level1But.collidepoint(pg.mouse.get_pos()):
+            state = LEVEL_SELECT
+            level = 1
+        elif level2But.collidepoint(pg.mouse.get_pos()):
+            state = LEVEL_SELECT
+            level = 2
+        elif level3But.collidepoint(pg.mouse.get_pos()):
+            state = LEVEL_SELECT
+            level = 3
+def playingTextFunc():
+    health_text = text_font.render(f"Health: {health}", True, WHITE)
+    level_text = subtitle_font.render(f"{level}", True, WHITE)
+    asteroidsleft_text = text_font.render(f"Asteroids left: {asteroid_count}", True, WHITE)
+
+    screen.blit(level_text, ((SCREEN_WIDTH / 2), 20))
+    screen.blit(health_text, (20, 20))
+    screen.blit(asteroidsleft_text, (20, 55))
 def spaceshipmainfunc():
     keys = pg.key.get_pressed()
 
@@ -193,57 +261,36 @@ def healthmainfunc():
 
             if health <= 0:
                 state = GAME_OVER
-def playingTextFunc():
-    health_text = text_font.render(f"Health: {health}", True, WHITE)
-    level_text = subtitle_font.render(f"{level}", True, WHITE)
-    asteroidsleft_text = text_font.render(f"Asteroids left: {asteroid_count}", True, WHITE)
-
-    screen.blit(level_text, ((SCREEN_WIDTH / 2), 20))
-    screen.blit(health_text, (20, 20))
-    screen.blit(asteroidsleft_text, (20, 55))
 running = True
 while running:
-    dt = clock.tick(60)
-
-    mousePos = pg.mouse.get_pos()
-    mouseClick = pg.mouse.get_pressed()[0]
-    mousePress = mouseClick and not prevMouseClick
-    prevMouseClick = mouseClick
-
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
 
-        if event.type == pg.KEYDOWN and state == PLAYING:
-            if event.key == pg.K_SPACE:
-                laser.append(Laser(
-                    ship.x + np.cos(ship.angle) * ship.length,
-                    ship.y + np.sin(ship.angle) * ship.length,
-                    ship.angle,
-                    laserSpeedCalc
-                ))
+        if state == MENU:
+            handle_menu_events(event)
+
+        elif state == LEVEL_SELECT:
+            handle_level_selection_events(event)
+
+        elif state == PLAYING:
+            handle_game_events(event)
+
+        elif state == GAME_OVER:
+            handle_game_over_events(event)
+
     if state == MENU:
-        levelSelectionBut = Menu()
+        draw_menu()
 
-        if mousePress and levelSelectionBut.collidepoint(mousePos):
-            state = PLAYING
-    elif state == LEVEL_SELECTION:
-        LevelSelection()
+    elif state == LEVEL_SELECT:
+        draw_level_selection()
+
     elif state == PLAYING:
-        screen.fill(BACKGROUND_COLOR1)
-
-        spaceshipmainfunc()
-        asteroidsmainfunc()
-        laserdrawfunc()
-        healthmainfunc()
-
-        playingTextFunc()
+        update_game(current_level)
+        draw_game()
 
     elif state == GAME_OVER:
-        screen.fill(BLACK)
-        game_over_text = title_font.render("GAME OVER", True, WHITE)
-        game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-        screen.blit(game_over_text, game_over_rect)
+        draw_game_over()
 
     pg.display.flip()
 
