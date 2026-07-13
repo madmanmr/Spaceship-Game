@@ -25,6 +25,7 @@ ship = Ship1(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
 MENU = "menu"
 LEVEL_SELECT = "level selection"
+GARAGE = "upgrade choice"
 PLAYING = "playing"
 GAME_OVER = "game over"
 state = MENU
@@ -108,10 +109,12 @@ def draw_level_selection():
     level1But = pg.Rect(0, 0, 220, 70)
     level2But = pg.Rect(0, 0, 220, 70)
     level3But = pg.Rect(0, 0, 220, 70)
+    BackBut = pg.Rect(0, 0, 150, 50)
 
-    level1But.center = (100, 400)
+    level1But.center = (200, 400)
     level2But.center = (SCREEN_WIDTH // 2, 400)
-    level2But.center = (SCREEN_WIDTH - 100, 400)
+    level2But.center = (SCREEN_WIDTH - 200, 400)
+    BackBut.center = (100, SCREEN_HEIGHT - 75)
 
     #hovercolour
     colour1 = (40, 180, 80)
@@ -123,32 +126,41 @@ def draw_level_selection():
     colour3 = (40, 180, 80)
     if level3But.collidepoint(mousePos):
         colour3 = (60, 220, 100)
+    colour4 = (40, 180, 80)
+    if BackBut.collidepoint(mousePos):
+        colour4 = (60, 220, 100)
 
     #draw buttons
     pg.draw.rect(screen, colour1, level1But, border_radius=15)
     pg.draw.rect(screen, colour2, level2But, border_radius=15)
     pg.draw.rect(screen, colour3, level3But, border_radius=15)
+    pg.draw.rect(screen, colour4, BackBut, border_radius=10)
 
     #text make
     titleText = title_font.render("Select Level", True, WHITE)
     one = text_font.render("1", True, BLACK)
     two = text_font.render("2", True, BLACK)
     three = text_font.render("3", True, BLACK)
+    Backtext = text_font.render("Back", True, (180, 180, 180))
 
     #text rects
     title_rect = titleText.get_rect(center=(SCREEN_WIDTH // 2, 150))
     oneRect = one.get_rect(center=level1But.center)
     twoRect = two.get_rect(center=level2But.center)
     threeRect = three.get_rect(center=level2But.center)
+    BackRect = Backtext.get_rect(center=BackBut.center)
 
     #draw
     screen.blit(titleText, title_rect)
     screen.blit(one, oneRect)
     screen.blit(two, twoRect)
     screen.blit(three, threeRect)
+    screen.blit(Backtext, BackRect)
 
     #returns for event func
     return level1But, level2But, level3But
+def draw_garage():
+
 #handle events in different states seperately so not doing all in start of running loop
 def handle_menu_events(event, levelSelectionBut):
     global state
@@ -169,6 +181,7 @@ def handle_level_selection_events(event, level1But, level2But, level3But):
         elif level3But.collidepoint(pg.mouse.get_pos()):
             state = LEVEL_SELECT
             level = 3
+
 def playingTextFunc():
     health_text = text_font.render(f"Health: {health}", True, WHITE)
     level_text = subtitle_font.render(f"{level}", True, WHITE)
@@ -272,6 +285,9 @@ while running:
 
         elif state == LEVEL_SELECT:
             handle_level_selection_events(event)
+
+        elif state == GARAGE:
+            handle_garage_events(event)
 
         elif state == PLAYING:
             handle_game_events(event)
