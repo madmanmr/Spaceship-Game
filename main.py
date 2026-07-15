@@ -84,10 +84,13 @@ for i in range(asteroid_count):
 #menu
 def create_menu_buttons():
     levelSelectionBut = pg.Rect(0, 0, 220, 70)
-    levelSelectionBut.center = (SCREEN_WIDTH // 2, 400)
+    GarageBut = pg.Rect(0,0,220, 70)
 
-    return levelSelectionBut
-levelSelectionBut = create_menu_buttons()
+    levelSelectionBut.center = ((SCREEN_WIDTH // 2) - 200, 400)
+    GarageBut.center = ((SCREEN_WIDTH // 2) + 200, 400)
+
+    return levelSelectionBut, GarageBut
+levelSelectionBut, GarageBut = create_menu_buttons()
 def draw_menu():
     screen.fill((15, 15, 30))
 
@@ -95,28 +98,33 @@ def draw_menu():
     colour = (40, 180, 80)
     if levelSelectionBut.collidepoint(mousePos):
         colour = (60, 220, 100)
+    colour2 = (40, 180, 80)
+    if GarageBut.collidepoint(mousePos):
+        colour2 = (60, 220, 100)
 
     pg.draw.rect(screen, colour, levelSelectionBut, border_radius=15)
+    pg.draw.rect(screen, colour2, GarageBut, border_radius=15)
 
     # Title
     title = title_font.render("SPACESHIP GAME", True, WHITE)
-    play_text = text_font.render("PLAY", True, BLACK)
-    subtitle = text_font.render("Press Play to Begin", True, (180, 180, 180))
+    levels_text = text_font.render("Levels", True, BLACK)
+    garage_text = text_font.render("Garage", True, BLACK)
 
     title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 150))
-    play_rect = play_text.get_rect(center=levelSelectionBut.center)
-    subtitle_rect = subtitle.get_rect(center=(SCREEN_WIDTH // 2, 220))
+    play_rect = levels_text.get_rect(center=levelSelectionBut.center)
+    garage_rect = garage_text.get_rect(center=GarageBut.center)
 
     screen.blit(title, title_rect)
-    screen.blit(play_text, play_rect)
-    screen.blit(subtitle, subtitle_rect)
+    screen.blit(levels_text, play_rect)
+    screen.blit(garage_text, garage_rect)
 def handle_menu_events(event):
     global state
 
     if event.type == pg.MOUSEBUTTONDOWN:
         if levelSelectionBut.collidepoint(pg.mouse.get_pos()):
             state = LEVEL_SELECT
-
+        elif GarageBut.collidepoint(pg.mouse.get_pos()):
+            state = GARAGE
 #level selection
 def create_level_selection_buttons():
     level1But = pg.Rect(0, 0, 220, 70)
@@ -202,13 +210,14 @@ def create_garage_buttons():
 BackButG = create_garage_buttons()
 def draw_garage():
     screen.fill((15, 15, 30))
+
     colour4 = (40, 180, 80)
     if BackButG.collidepoint(mousePos):
         colour4 = (60, 220, 100)
 
     pg.draw.rect(screen, colour4, BackButG, border_radius=10)
 
-    titleText = title_font.render("Select Level", True, WHITE)
+    titleText = title_font.render("Garage", True, WHITE)
     Backtext = text_font.render("Back", True, (180, 180, 180))
 
     title_rect = titleText.get_rect(center=(SCREEN_WIDTH // 2, 150))
@@ -412,6 +421,9 @@ while running:
 
     elif state == LEVEL_SELECT:
         draw_level_selection()
+
+    elif state == GARAGE:
+        draw_garage()
 
     elif state == PLAYING:
         update_game()
