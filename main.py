@@ -69,16 +69,20 @@ asteroid_count: int = level * 5
 asteroids = []
 laser = []
 
-for i in range(asteroid_count):
-    x = np.random.randint(0, SCREEN_WIDTH)
-    y = np.random.randint(0, SCREEN_HEIGHT)
+#monye
+coins = 0
 
-    asteroid = Asteroid(x, y)
-    asteroid.angle = np.radians(np.random.randint(-20, 21))
-    asteroid.speed = np.random.randint(asteroidCalcMin, asteroidCalcMax)
+def create_asteroid():
+    for i in range(asteroid_count):
+        x = np.random.randint(0, SCREEN_WIDTH)
+        y = np.random.randint(0, SCREEN_HEIGHT)
 
-    asteroids.append(asteroid)
+        asteroid = Asteroid(x, y)
+        asteroid.angle = np.radians(np.random.randint(-20, 21))
+        asteroid.speed = np.random.randint(asteroidCalcMin, asteroidCalcMax)
 
+        asteroids.append(asteroid)
+create_asteroid()
 #create buttons outside of draw funcs
 
 #menu
@@ -182,19 +186,34 @@ def draw_level_selection():
     screen.blit(three, threeRect)
     screen.blit(Backtext, BackRect)
 def handle_level_selection_events(event):
-    global state, level
+    global state, level, damage, asteroidCalcMin, asteroidCalcMax, laserSpeedCalc, backgroundcolourcalc
 
     if event.type == pg.MOUSEBUTTONDOWN:
         if level1But.collidepoint(pg.mouse.get_pos()):
             level = 1
+            damage = leveldamage[level - 1]
+            asteroidCalcMax = asteroidSpeedMax[level - 1]
+            asteroidCalcMin = asteroidSpeedMin[level - 1]
+            laserSpeedCalc = laserSpeed[laserLevel - 1]
+            backgroundcolourcalc = backgroundColour[level - 1]
             current_level()
             state = PLAYING
         elif level2But.collidepoint(pg.mouse.get_pos()):
             level = 2
+            damage = leveldamage[level - 1]
+            asteroidCalcMax = asteroidSpeedMax[level - 1]
+            asteroidCalcMin = asteroidSpeedMin[level - 1]
+            laserSpeedCalc = laserSpeed[laserLevel - 1]
+            backgroundcolourcalc = backgroundColour[level - 1]
             current_level()
             state = PLAYING
         elif level3But.collidepoint(pg.mouse.get_pos()):
             level = 3
+            damage = leveldamage[level - 1]
+            asteroidCalcMax = asteroidSpeedMax[level - 1]
+            asteroidCalcMin = asteroidSpeedMin[level - 1]
+            laserSpeedCalc = laserSpeed[laserLevel - 1]
+            backgroundcolourcalc = backgroundColour[level - 1]
             current_level()
             state = PLAYING
         elif BackButL.collidepoint(pg.mouse.get_pos()):
@@ -242,7 +261,7 @@ BackButGame = draw_game_buttons()
 def draw_game():
     ship.draw1(screen)
     for asteroid in asteroids:
-        asteroid.draw(screen)
+            asteroid.draw(screen)
 
     for laser_obj in laser:
         laser_obj.draw(screen)
@@ -256,6 +275,7 @@ def update_game():
     laserdrawfunc()
     healthmainfunc()
 def handle_game_events():
+    global state
     if event.type == pg.KEYDOWN:
         if event.key == pg.K_SPACE:
             laser.append(
@@ -266,6 +286,8 @@ def handle_game_events():
                     laserSpeedCalc
                 )
             )
+    if asteroid_count == 0:
+        state = GAME_OVER
 #game over
 def draw_game_over_buttons():
     NewGameBut = pg.Rect(0, 0, 150, 50)
@@ -282,7 +304,7 @@ def draw_game_over():
     if NewGameBut.collidepoint(mousePos):
         colour1 = (60, 220, 100)
     colour2 = (40, 180, 80)
-    if NewGameBut.collidepoint(mousePos):
+    if MenuBut.collidepoint(mousePos):
         colour2 = (60, 220, 100)
 
     pg.draw.rect(screen, colour1, NewGameBut, border_radius=15)
@@ -294,14 +316,34 @@ def draw_game_over():
     screen.blit(new_text, new_text.get_rect(center=NewGameBut.center))
     screen.blit(menu_text, menu_text.get_rect(center=MenuBut.center))
 def handle_game_over_events():
-    global state
+    global state, level, health, asteroid_count
+    if event.type == pg.MOUSEBUTTONDOWN:
+        if NewGameBut.collidepoint(pg.mouse.get_pos()):
+            start_new_game()
+        elif MenuBut.collidepoint(pg.mouse.get_pos()):
+            state = MENU
+            level = 0
+def start_new_game():
+    global state, health, hit_cooldown, laser
+
+    health = 100
+    hit_cooldown = 0
+    laser.clear()
+
+    current_level()
+
+    ship.x = SCREEN_WIDTH // 2
+    ship.y = SCREEN_HEIGHT // 2
+    ship.speed_x = 0
+    ship.speed_y = 0
+
+    state = PLAYING
 
 def current_level():
     global asteroids
     global asteroid_count
 
     asteroids.clear()
-
     asteroid_count = level * 5
 
     for i in range(asteroid_count):
@@ -376,7 +418,6 @@ def asteroidsmainfunc():
         if destroyed:
             asteroid_count -= 1
             continue
-
         # wrap asteroid
         if asteroid.x > SCREEN_WIDTH:
             asteroid.x = 0
