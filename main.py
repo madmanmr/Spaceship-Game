@@ -151,9 +151,9 @@ def draw_level_selection():
     colour3 = (40, 180, 80)
     if level3But.collidepoint(mousePos):
         colour3 = (60, 220, 100)
-    colour4 = (40, 180, 80)
+    colour4 = (204, 57, 47)
     if BackButL.collidepoint(mousePos):
-        colour4 = (60, 220, 100)
+        colour4 = (173, 44, 35)
 
     #draw buttons
     pg.draw.rect(screen, colour1, level1But, border_radius=15)
@@ -211,9 +211,9 @@ BackButG = create_garage_buttons()
 def draw_garage():
     screen.fill((15, 15, 30))
 
-    colour4 = (40, 180, 80)
+    colour4 = (204, 57, 47)
     if BackButG.collidepoint(mousePos):
-        colour4 = (60, 220, 100)
+        colour4 = (173, 44, 35)
 
     pg.draw.rect(screen, colour4, BackButG, border_radius=10)
 
@@ -241,7 +241,12 @@ def draw_game_buttons():
 BackButGame = draw_game_buttons()
 def draw_game():
     ship.draw1(screen)
-    asteroid.draw(screen)
+    for asteroid in asteroids:
+        asteroid.draw(screen)
+
+    for laser_obj in laser:
+        laser_obj.draw(screen)
+
     playingTextFunc()
 def update_game():
     screen.fill(backgroundcolourcalc)
@@ -251,8 +256,16 @@ def update_game():
     laserdrawfunc()
     healthmainfunc()
 def handle_game_events():
-    global state
-
+    if event.type == pg.KEYDOWN:
+        if event.key == pg.K_SPACE:
+            laser.append(
+                Laser(
+                    ship.x + np.cos(ship.angle) * ship.length,
+                    ship.y + np.sin(ship.angle) * ship.length,
+                    ship.angle,
+                    laserSpeedCalc
+                )
+            )
 #game over
 def draw_game_over_buttons():
     NewGameBut = pg.Rect(0, 0, 150, 50)
@@ -375,7 +388,6 @@ def asteroidsmainfunc():
 def laserdrawfunc():
     for laser_obj in laser:
         laser_obj.update()
-        laser_obj.draw(screen)
 def healthmainfunc():
     global health, hit_cooldown, state
 
@@ -397,6 +409,9 @@ def healthmainfunc():
 
 running = True
 while running:
+    clock.tick(60)
+    mousePos = pg.mouse.get_pos()
+
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
