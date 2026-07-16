@@ -6,111 +6,140 @@
 
 '''
 
+#imports
 import pygame as pg
 import numpy as np
+
 from Spaceship import Ship1
 from settings import *
-import sys
 from asteroids import Asteroid
 from lasers import Laser
 
+from Screens import menu, level_select, garage, playing, game_over
+
+#basics
 pg.init()
 
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pg.time.Clock()
 
+title_font = pg.font.SysFont(None, 80)
+subtitle_font = pg.font.SysFont(None, 48)
+text_font = pg.font.SysFont(None, 35)
 
 
-ship = Ship1(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-
+# states
 MENU = "menu"
 LEVEL_SELECT = "level selection"
 GARAGE = "upgrade choice"
 PLAYING = "playing"
 GAME_OVER = "game over"
+
 state = MENU
 
-#vars
-prevMouseClick = False
-mousePos = pg.mouse.get_pos()
-mousePress = mousePos[0]
-title_font = pg.font.SysFont(None, 80)
-subtitle_font = pg.font.SysFont(None, 48)
-text_font = pg.font.SysFont(None, 35)
+
+# game things
+ship = Ship1(SCREEN_WIDTH // 2,SCREEN_HEIGHT // 2)
+
+asteroids = []
+laser = []
+
 
 #vars changeable by level
 level = 1
 laserLevel = 1
 
-#lists
-leveldamage = [10,20,50] #number of elements in list is number of levels there are
-asteroidSpeedMax = [10,15,20]
-asteroidSpeedMin = [5,8,15]
-laserSpeed = [15,20,25,30]
-backgroundColour = [(15, 15, 30),(58, 43, 87),(79, 43, 97)]
+leveldamage = [10, 20, 50]
+asteroidSpeedMax = [10, 15, 20]
+asteroidSpeedMin = [5, 8, 15]
+laserSpeed = [15, 20, 25, 30]
+
+backgroundColour = [
+    (15, 15, 30), #dark
+    (58, 43, 87), #purple
+    (79, 43, 97) #red
+]
+
 
 #calcs
-damage = leveldamage[level-1]
-asteroidCalcMax = asteroidSpeedMax[level-1]
-asteroidCalcMin = asteroidSpeedMin[level-1]
-laserSpeedCalc = laserSpeed[laserLevel-1]
-backgroundcolourcalc = backgroundColour[level-1]
+damage = leveldamage[level - 1]
+asteroidCalcMax = asteroidSpeedMax[level - 1]
+asteroidCalcMin = asteroidSpeedMin[level - 1]
+laserSpeedCalc = laserSpeed[laserLevel - 1]
+backgroundColourCalc = backgroundColour[level - 1]
+
 
 #health
 health = 100
 hit_cooldown = 0
 
 #asteroid
-asteroid_count: int = level * 5
+asteroid_count = 0
 
-#laser
+#funcs
+#calc all different vals for start of each level
+def set_level_values():
+    global damage, asteroidCalcMax, asteroidCalcMin, laserSpeedCalc, backgroundColourCalc
 
-#asteroid vars
-asteroids = []
-laser = []
+    damage = leveldamage[level - 1]
+    asteroidCalcMax = asteroidSpeedMax[level - 1]
+    asteroidCalcMin = asteroidSpeedMin[level - 1]
+    laserSpeedCalc = laserSpeed[laserLevel - 1]
+    backgroundColourCalc = backgroundColour[level - 1]
 
-#monye
-coins = 0
-
-def create_asteroid():
-    for i in range(asteroid_count):
-        x = np.random.randint(0, SCREEN_WIDTH)
-        y = np.random.randint(0, SCREEN_HEIGHT)
-
-        asteroid = Asteroid(x, y)
-        asteroid.angle = np.radians(np.random.randint(-20, 21))
-        asteroid.speed = np.random.randint(asteroidCalcMin, asteroidCalcMax)
-
-        asteroids.append(asteroid)
-create_asteroid()
-#create buttons outside of draw funcs
-
-#menu
-#level selection
-#garage
-#game
-#game over
-
-def current_level():
-    global asteroids
+#creat number of asteroids
+def create_asteroids():
     global asteroid_count
 
     asteroids.clear()
     asteroid_count = level * 5
 
-    for i in range(asteroid_count):
+    for _ in range(asteroid_count):
         x = np.random.randint(0, SCREEN_WIDTH)
         y = np.random.randint(0, SCREEN_HEIGHT)
 
         asteroid = Asteroid(x, y)
         asteroid.angle = np.radians(np.random.randint(-20, 21))
-        asteroid.speed = np.random.randint(
-            asteroidSpeedMin[level-1],
-            asteroidSpeedMax[level-1]
-        )
+        asteroid.speed = np.random.randint(asteroidCalcMin,asteroidCalcMax)
 
         asteroids.append(asteroid)
 
+#move ship to centre and stop
+def reset_ship():
+
+    ship.x = SCREEN_WIDTH // 2
+    ship.y = SCREEN_HEIGHT // 2
+
+    ship.speed_x = 0
+    ship.speed_y = 0
+
+#start x level using vals set earlier
+def start_level(selected_level):
+
+    global level
+    global health
+    global hit_cooldown
+    global state
+
+    level = selected_level
+
+    health = health
+    hit_cooldown = 0
+
+    laser.clear()
+
+    reset_ship()
+    set_level_values()
+    create_asteroids()
+
+    state = PLAYING
+
+#for when game is done and want to play again with same level vars
+def start_new_game():
+
+    start_level(level)
+
+#text on screen while playing
 def playingTextFunc():
     health_text = text_font.render(f"Health: {health}", True, WHITE)
     level_text = subtitle_font.render(f"{level}", True, WHITE)
@@ -119,6 +148,8 @@ def playingTextFunc():
     screen.blit(level_text, ((SCREEN_WIDTH / 2), 20))
     screen.blit(health_text, (20, 20))
     screen.blit(asteroidsleft_text, (20, 55))
+
+#move spaceship
 def spaceshipmainfunc():
     keys = pg.key.get_pressed()
 
@@ -144,6 +175,13 @@ def spaceshipmainfunc():
         ship.bounce_y()
 
     ship.update()
+
+#,ove lasers
+def lasermainfunc():
+    for laser_obj in laser:
+        laser_obj.update()
+
+#detect collision with laser and asteroid and move asteroids
 def asteroidsmainfunc():
     global asteroid_count
     for asteroid in asteroids[:]:
@@ -161,6 +199,8 @@ def asteroidsmainfunc():
                 if distance <= asteroid.radius:
                     asteroids.remove(asteroid)
                     laser.remove(laser_obj)
+
+                    asteroid_count -= 1
                     destroyed = True
                     break
 
@@ -168,19 +208,16 @@ def asteroidsmainfunc():
                 break
 
         if destroyed:
-            asteroid_count -= 1
             continue
-        # wrap asteroid
+
         if asteroid.x > SCREEN_WIDTH:
             asteroid.x = 0
         elif asteroid.x < 0:
             asteroid.x = SCREEN_WIDTH
-
         if asteroid.y > SCREEN_HEIGHT or asteroid.y < 0:
             asteroid.angle = -asteroid.angle
-def laserdrawfunc():
-    for laser_obj in laser:
-        laser_obj.update()
+
+#change health when hit and change gamemode when health == 0
 def healthmainfunc():
     global health, hit_cooldown, state
 
@@ -203,42 +240,69 @@ def healthmainfunc():
 running = True
 while running:
     clock.tick(60)
-    mousePos = pg.mouse.get_pos()
 
+    mouse_pos = pg.mouse.get_pos()
+
+    # Events
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
 
-        if state == MENU:
-            handle_menu_events(event)
+        elif state == MENU:
+            new_state = menu.handle_menu_events(event)
+
+            if new_state is not None:
+                state = new_state
 
         elif state == LEVEL_SELECT:
-            handle_level_selection_events(event)
+            new_state, selected_level = (level_select.handle_level_selection_events(event))
+
+            if selected_level is not None:
+                start_level(selected_level)
+
+            elif new_state is not None:
+                state = new_state
 
         elif state == GARAGE:
-            handle_garage_events(event)
+            new_state = garage.handle_garage_events(event)
+
+            if new_state is not None:
+                state = new_state
 
         elif state == PLAYING:
-            handle_game_events()
+            new_state = playing.handle_game_events(event,ship,laser,Laser,laserSpeedCalc)
+
+            if new_state is not None:
+                state = new_state
 
         elif state == GAME_OVER:
-            handle_game_over_events()
+            action = game_over.handle_game_over_events(event)
+
+            if action == "new_game":
+                start_new_game()
+
+            elif action == "menu":
+                state = MENU
 
     if state == MENU:
-        draw_menu()
+        menu.draw_menu(screen, mouse_pos, title_font, text_font)
 
     elif state == LEVEL_SELECT:
-        draw_level_selection()
+        level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
 
     elif state == GARAGE:
-        draw_garage()
+        garage.draw_garage(screen, mouse_pos, title_font, text_font)
 
     elif state == PLAYING:
-        update_game()
-        draw_game()
+        playing.update_game(screen,backgroundColourCalc,spaceshipmainfunc,asteroidsmainfunc,lasermainfunc,healthmainfunc)
+
+        playing.draw_game(screen,ship,asteroids,laser,playingTextFunc)
+
+        if asteroid_count == 0:
+            state = GAME_OVER
 
     elif state == GAME_OVER:
-        draw_game_over()
+        game_over.draw_game_over(screen, mouse_pos, text_font)
 
     pg.display.flip()
 
