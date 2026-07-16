@@ -70,7 +70,8 @@ backgroundColourCalc = backgroundColour[level - 1]
 
 
 #health
-health = 100
+healthMax = 100
+health = healthMax
 hit_cooldown = 0
 
 #asteroid
@@ -123,7 +124,7 @@ def start_level(selected_level):
 
     level = selected_level
 
-    health = health
+    health = healthMax
     hit_cooldown = 0
 
     laser.clear()
@@ -270,7 +271,7 @@ while running:
                 state = new_state
 
         elif state == PLAYING:
-            new_state = playing.handle_game_events(event,ship,laser,Laser,laserSpeedCalc)
+            new_state = playing.handle_game_events(event,ship,laser,Laser,laserSpeedCalc,asteroid_count)
 
             if new_state is not None:
                 state = new_state
@@ -297,9 +298,6 @@ while running:
         playing.update_game(screen,backgroundColourCalc,spaceshipmainfunc,asteroidsmainfunc,lasermainfunc,healthmainfunc)
 
         playing.draw_game(screen,ship,asteroids,laser,playingTextFunc)
-
-        if asteroid_count == 0:
-            state = GAME_OVER
 
     elif state == GAME_OVER:
         game_over.draw_game_over(screen, mouse_pos, text_font)
