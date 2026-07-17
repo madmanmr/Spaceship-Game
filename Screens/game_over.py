@@ -1,6 +1,7 @@
 import pygame as pg
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK
 
+
 def create_game_over_buttons():
     new_game_button = pg.Rect(0, 0, 200, 60)
     menu_button = pg.Rect(0, 0, 200, 60)
@@ -15,41 +16,28 @@ NewGameBut, MenuBut = create_game_over_buttons()
 def draw_game_over(screen, mouse_pos, text_font):
     screen.fill((15, 15, 30))
 
-    new_game_colour = (40, 180, 80)
-    menu_colour = (40, 180, 80)
+    new_game_colour = (60, 220, 100)
+    menu_colour = (60, 220, 100)
+
+    new_game_copy_but = NewGameBut.copy()
+    menu_copy_but = MenuBut.copy()
 
     if NewGameBut.collidepoint(mouse_pos):
-        new_game_colour = (60, 220, 100)
+        new_game_colour = (40, 180, 80)
+        new_game_copy_but = NewGameBut.inflate(-7, -3)
 
     if MenuBut.collidepoint(mouse_pos):
-        menu_colour = (60, 220, 100)
+        menu_colour = (40, 180, 80)
+        menu_copy_but = MenuBut.inflate(-7, -3)
 
-    pg.draw.rect(
-        screen,
-        new_game_colour,
-        NewGameBut,
-        border_radius=15
-    )
-
-    pg.draw.rect(
-        screen,
-        menu_colour,
-        MenuBut,
-        border_radius=15
-    )
+    pg.draw.rect(screen, new_game_colour, new_game_copy_but, border_radius=15)
+    pg.draw.rect(screen, menu_colour, menu_copy_but, border_radius=15)
 
     new_text = text_font.render("New Game", True, BLACK)
     menu_text = text_font.render("Menu", True, BLACK)
 
-    screen.blit(
-        new_text,
-        new_text.get_rect(center=NewGameBut.center)
-    )
-
-    screen.blit(
-        menu_text,
-        menu_text.get_rect(center=MenuBut.center)
-    )
+    screen.blit(new_text, new_text.get_rect(center=NewGameBut.center))
+    screen.blit(menu_text, menu_text.get_rect(center=MenuBut.center))
 
 def handle_game_over_events(event):
     if event.type == pg.MOUSEBUTTONDOWN:

@@ -2,6 +2,7 @@ import pygame as pg
 import numpy as np
 from settings import *
 
+
 def draw_game_buttons():
     BackButGame = pg.Rect(0, 0, 150, 50)
     BackButGame.center = (100, SCREEN_HEIGHT - 75)
