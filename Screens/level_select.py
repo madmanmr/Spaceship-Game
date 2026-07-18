@@ -20,9 +20,9 @@ level1But, level2But, level3But, BackButL = (create_level_selection_buttons())
 def draw_level_selection(screen, mouse_pos, title_font, text_font):
     screen.fill((15, 15, 30))
 
-    colour1 = (40, 180, 80)
-    colour2 = (40, 180, 80)
-    colour3 = (40, 180, 80)
+    colour1 = (60, 220, 100)
+    colour2 = (60, 220, 100)
+    colour3 = (60, 220, 100)
     back_colour = (204, 57, 47)
 
     level1_copy_but = level1But.copy()
@@ -31,15 +31,15 @@ def draw_level_selection(screen, mouse_pos, title_font, text_font):
     back_copy_but = BackButL.copy()
 
     if level1But.collidepoint(mouse_pos):
-        colour1 = (60, 220, 100)
+        colour1 = (40, 180, 80)
         level1_copy_but = level1But.inflate(-7, -3)
 
     if level2But.collidepoint(mouse_pos):
-        colour2 = (60, 220, 100)
+        colour2 = (40, 180, 80)
         level2_copy_but = level2But.inflate(-7, -3)
 
     if level3But.collidepoint(mouse_pos):
-        colour3 = (60, 220, 100)
+        colour3 = (40, 180, 80)
         level3_copy_but = level3But.inflate(-7, -3)
 
     if BackButL.collidepoint(mouse_pos):
