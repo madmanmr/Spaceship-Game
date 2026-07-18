@@ -37,6 +37,8 @@ GAME_OVER = "game over"
 
 state = MENU
 
+lose = False
+
 
 # game things
 ship = Ship1(SCREEN_WIDTH // 2,SCREEN_HEIGHT // 2)
@@ -74,6 +76,10 @@ healthMax = 100
 health = healthMax
 hit_cooldown = 0
 
+#coins
+coins = 0
+coinChange = [100, 200, 500]
+coinsChangeYes = 0
 #asteroid
 asteroid_count = 0
 
@@ -81,7 +87,6 @@ asteroid_count = 0
 #calc all different vals for start of each level
 def set_level_values():
     global damage, asteroidCalcMax, asteroidCalcMin, laserSpeedCalc, backgroundColourCalc
-
     damage = leveldamage[level - 1]
     asteroidCalcMax = asteroidSpeedMax[level - 1]
     asteroidCalcMin = asteroidSpeedMin[level - 1]
@@ -117,15 +122,14 @@ def reset_ship():
 #start x level using vals set earlier
 def start_level(selected_level):
 
-    global level
-    global health
-    global hit_cooldown
-    global state
+    global level, health, hit_cooldown, state, lose, coinsChangeYes
 
     level = selected_level
 
     health = healthMax
     hit_cooldown = 0
+    lose = False
+    coinsChangeYes = 0
 
     laser.clear()
 
@@ -142,13 +146,42 @@ def start_new_game():
 
 #text on screen while playing
 def playingTextFunc():
-    health_text = text_font.render(f"Health: {health}", True, WHITE)
     level_text = subtitle_font.render(f"{level}", True, WHITE)
-    asteroidsleft_text = text_font.render(f"Asteroids left: {asteroid_count}", True, WHITE)
+    coinsOwn_text = text_font.render(f"Coins: {coins}", True, YELLOW)
+    asteroidsLeft_text = text_font.render(f"Asteroids left: {asteroid_count}", True, WHITE)
+    health_text = text_font.render(f"Health: {health}", True, WHITE)
 
     screen.blit(level_text, ((SCREEN_WIDTH / 2), 20))
-    screen.blit(health_text, (20, 20))
-    screen.blit(asteroidsleft_text, (20, 55))
+    screen.blit(coinsOwn_text, (20, 20))
+    screen.blit(asteroidsLeft_text, (20, 75))
+    screen.blit(health_text, (20, 110))
+
+#garage texas
+def garageTextFunc():
+    coinsOwn_text = text_font.render(f"Coins: {coins}", True, YELLOW)
+
+    screen.blit(coinsOwn_text, (20, 20))
+
+#text when game done
+def gameOverTextFunc():
+    global coins, coinsChangeYes
+    coinsOwn_text = text_font.render(f"Coins: {coins}", True, YELLOW)
+    win_text = subtitle_font.render("YOU WIN!", True, WHITE)
+    lose_text = subtitle_font.render("YOU LOSE!", True, WHITE)
+
+    TextRect = win_text.get_rect(center=(SCREEN_WIDTH // 2, 150))
+
+    if lose:
+        screen.blit(lose_text, TextRect)
+        reward = (coinChange[level - 1]) / 5
+    else:
+        screen.blit(win_text, TextRect)
+        reward = coinChange[level - 1]
+
+    if coinsChangeYes == 0:
+        coinsChangeYes += 1
+        coins += reward
+    screen.blit(coinsOwn_text, (20, 20))
 
 #move spaceship
 def spaceshipmainfunc():
@@ -220,7 +253,7 @@ def asteroidsmainfunc():
 
 #change health when hit and change gamemode when health == 0
 def healthmainfunc():
-    global health, hit_cooldown, state
+    global health, hit_cooldown, state, lose
 
     if hit_cooldown > 0:
         hit_cooldown -= 1
@@ -237,6 +270,7 @@ def healthmainfunc():
 
             if health <= 0:
                 state = GAME_OVER
+                lose = True
 
 running = True
 while running:
@@ -292,7 +326,7 @@ while running:
         level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
 
     elif state == GARAGE:
-        garage.draw_garage(screen, mouse_pos, title_font, text_font)
+        garage.draw_garage(screen, mouse_pos, title_font, text_font, garageTextFunc)
 
     elif state == PLAYING:
         playing.update_game(screen,backgroundColourCalc,spaceshipmainfunc,asteroidsmainfunc,lasermainfunc,healthmainfunc)
@@ -300,7 +334,7 @@ while running:
         playing.draw_game(screen,ship,asteroids,laser,playingTextFunc)
 
     elif state == GAME_OVER:
-        game_over.draw_game_over(screen, mouse_pos, text_font)
+        game_over.draw_game_over(screen, mouse_pos, text_font, gameOverTextFunc)
 
     pg.display.flip()
 

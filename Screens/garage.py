@@ -10,7 +10,7 @@ def create_garage_buttons():
 
 BackButG = create_garage_buttons()
 
-def draw_garage(screen, mouse_pos, title_font, text_font):
+def draw_garage(screen, mouse_pos, title_font, text_font, garageTextFunc):
     screen.fill((15, 15, 30))
 
     back_colour = (204, 57, 47)
@@ -27,11 +27,12 @@ def draw_garage(screen, mouse_pos, title_font, text_font):
     back_text = text_font.render("Back", True, (180, 180, 180))
 
     title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 150))
-
     back_rect = back_text.get_rect(center=BackButG.center)
 
     screen.blit(title_text, title_rect)
     screen.blit(back_text, back_rect)
+
+    garageTextFunc()
 
 def handle_garage_events(event):
     if event.type == pg.MOUSEBUTTONDOWN:

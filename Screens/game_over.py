@@ -1,5 +1,5 @@
 import pygame as pg
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, YELLOW
 
 
 def create_game_over_buttons():
@@ -13,7 +13,7 @@ def create_game_over_buttons():
 
 NewGameBut, MenuBut = create_game_over_buttons()
 
-def draw_game_over(screen, mouse_pos, text_font):
+def draw_game_over(screen, mouse_pos, text_font, gameOverTextFunc):
     screen.fill((15, 15, 30))
 
     new_game_colour = (60, 220, 100)
@@ -38,6 +38,8 @@ def draw_game_over(screen, mouse_pos, text_font):
 
     screen.blit(new_text, new_text.get_rect(center=NewGameBut.center))
     screen.blit(menu_text, menu_text.get_rect(center=MenuBut.center))
+
+    gameOverTextFunc()
 
 def handle_game_over_events(event):
     if event.type == pg.MOUSEBUTTONDOWN:
