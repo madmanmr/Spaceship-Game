@@ -326,7 +326,7 @@ while running:
         level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
 
     elif state == GARAGE:
-        garage.draw_garage(screen, mouse_pos, title_font, text_font, garageTextFunc)
+        garage.draw_garage(screen, mouse_pos, title_font, text_font, subtitle_font, garageTextFunc)
 
     elif state == PLAYING:
         playing.update_game(screen,backgroundColourCalc,spaceshipmainfunc,asteroidsmainfunc,lasermainfunc,healthmainfunc)
