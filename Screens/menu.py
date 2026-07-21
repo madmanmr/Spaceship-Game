@@ -1,4 +1,5 @@
 import pygame as pg
+
 from settings import SCREEN_WIDTH, WHITE, BLACK
 
 
@@ -20,7 +21,7 @@ def create_menu_buttons():
 
 levelSelectionBut, GarageBut = create_menu_buttons()
 
-def draw_menu(screen, mouse_pos, title_font, text_font):
+def draw_menu(screen, mouse_pos, title_font, subtitle_font):
     screen.fill((15, 15, 30))
 
     level_colour = (60, 220, 100)
@@ -42,8 +43,8 @@ def draw_menu(screen, mouse_pos, title_font, text_font):
     pg.draw.rect(screen,garage_colour,garage_copy_rect,border_radius=15)
 
     title = title_font.render("SPACESHIP GAME",True,WHITE)
-    levels_text = text_font.render("Levels",True,BLACK)
-    garage_text = text_font.render("Garage", True,BLACK)
+    levels_text = subtitle_font.render("Levels",True,BLACK)
+    garage_text = subtitle_font.render("Garage", True,BLACK)
 
     title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 150))
     levels_rect = levels_text.get_rect(center=levelSelectionBut.center)
