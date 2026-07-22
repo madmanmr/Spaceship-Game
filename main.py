@@ -41,57 +41,79 @@ lose = False
 
 
 # game things
-ship = Ship1(SCREEN_WIDTH // 2,SCREEN_HEIGHT // 2)
+ship = Ship1(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
 asteroids = []
 laser = []
 
-
-#vars changeable by level
+# player
+player = {
+    "health": 100,
+    "coins": 0
+}
+# game
+game = {
+    "hitCooldown": 0,
+    "coinsChangeYes": 0,
+    "asteroidCount": 0
+}
+# level
 level = 1
-laserLevel = 1
 
-leveldamage = [10, 20, 50]
+# upgrades pass to garage
+upgrades = {
+    "healthUpgrade": 0,
+    "laserSpeedUpgrade": 0,
+    "coinUpgrade": 0
+}
+
+#upgrade values
+healthMaxValues = [100, 120, 140, 160, 180]
+laserSpeedValues = [15, 20, 25, 30]
+coinRewardMultiplier = [1, 1.5, 2, 3, 5]
+
+# calculated upgrade values
+healthMax = healthMaxValues[upgrades["healthUpgrade"]]
+laserSpeedCalc = laserSpeedValues[upgrades["laserSpeedUpgrade"]]
+coinRewardMultiplierCalc = coinRewardMultiplier[upgrades["coinUpgrade"]]
+
+#level values
+levelDamage = [10, 20, 50]
 asteroidSpeedMax = [10, 15, 20]
 asteroidSpeedMin = [5, 8, 15]
-laserSpeed = [15, 20, 25, 30]
-
 backgroundColour = [
-    (15, 15, 30), #dark
-    (58, 43, 87), #purple
-    (79, 43, 97) #red
+    (15, 15, 30),
+    (58, 43, 87),
+    (79, 43, 97)
 ]
+coinLevelReward = [100, 300, 500]
 
-
-#calcs
-damage = leveldamage[level - 1]
+#calculate level values
+damage = levelDamage[level - 1]
 asteroidCalcMax = asteroidSpeedMax[level - 1]
 asteroidCalcMin = asteroidSpeedMin[level - 1]
-laserSpeedCalc = laserSpeed[laserLevel - 1]
 backgroundColourCalc = backgroundColour[level - 1]
-
-
-#health
-healthMax = 100
-health = healthMax
-hit_cooldown = 0
-
-#coins
-coins = 0
-coinChange = [100, 200, 500]
-coinsChangeYes = 0
-#asteroid
-asteroid_count = 0
+coinLevelRewardCalc = coinLevelReward[level - 1]
 
 #funcs
 #calc all different vals for start of each level
 def set_level_values():
-    global damage, asteroidCalcMax, asteroidCalcMin, laserSpeedCalc, backgroundColourCalc
-    damage = leveldamage[level - 1]
+    global damage, asteroidCalcMax, asteroidCalcMin, backgroundColourCalc, coinLevelRewardCalc
+
+    damage = levelDamage[level - 1]
     asteroidCalcMax = asteroidSpeedMax[level - 1]
     asteroidCalcMin = asteroidSpeedMin[level - 1]
-    laserSpeedCalc = laserSpeed[laserLevel - 1]
     backgroundColourCalc = backgroundColour[level - 1]
+    coinLevelRewardCalc = coinLevelReward[level - 1]
+
+
+#calc vals of upgrades before level starts
+def set_upgrade_values():
+    global healthMax, laserSpeedCalc, coinRewardMultiplierCalc
+
+    healthMax = healthMaxValues[upgrades["healthUpgrade"]]
+    laserSpeedCalc = laserSpeedValues[upgrades["laserSpeedUpgrade"]]
+    coinRewardMultiplierCalc = coinRewardMultiplier[upgrades["coinUpgrade"]]
 
 #creat number of asteroids
 def create_asteroids():
@@ -126,15 +148,16 @@ def start_level(selected_level):
 
     level = selected_level
 
-    health = healthMax
+    player["health"] = healthMax
     hit_cooldown = 0
     lose = False
-    coinsChangeYes = 0
+    player["coins"] = 0
 
     laser.clear()
 
     reset_ship()
     set_level_values()
+    set_upgrade_values()
     create_asteroids()
 
     state = PLAYING
@@ -147,9 +170,9 @@ def start_new_game():
 #text on screen while playing
 def playingTextFunc():
     level_text = subtitle_font.render(f"{level}", True, WHITE)
-    coinsOwn_text = text_font.render(f"Coins: {coins}", True, YELLOW)
+    coinsOwn_text = text_font.render(f"Coins: {player["coins"]}", True, YELLOW)
     asteroidsLeft_text = text_font.render(f"Asteroids left: {asteroid_count}", True, WHITE)
-    health_text = text_font.render(f"Health: {health}", True, WHITE)
+    health_text = text_font.render(f"Health: {player["health"]}", True, WHITE)
 
     screen.blit(level_text, ((SCREEN_WIDTH / 2), 20))
     screen.blit(coinsOwn_text, (20, 20))
@@ -158,29 +181,28 @@ def playingTextFunc():
 
 #garage texas
 def garageTextFunc():
-    coinsOwn_text = text_font.render(f"Coins: {coins}", True, YELLOW)
+    coinsOwn_text = text_font.render(f"Coins: {player['coins']}", True, YELLOW)
 
     screen.blit(coinsOwn_text, (20, 20))
 
 #text when game done
 def gameOverTextFunc():
-    global coins, coinsChangeYes
-    coinsOwn_text = text_font.render(f"Coins: {coins}", True, YELLOW)
-    win_text = subtitle_font.render("YOU WIN!", True, WHITE)
-    lose_text = subtitle_font.render("YOU LOSE!", True, WHITE)
+    coinsOwn_text = text_font.render(f"Coins: {player['coins']}", True, YELLOW)
+    win_text = title_font.render("YOU WIN!", True, WHITE)
+    lose_text = title_font.render("YOU LOSE!", True, WHITE)
 
     TextRect = win_text.get_rect(center=(SCREEN_WIDTH // 2, 150))
 
     if lose:
         screen.blit(lose_text, TextRect)
-        reward = (coinChange[level - 1]) / 5
+        reward = coinLevelRewardCalc * coinRewardMultiplierCalc / 5
     else:
         screen.blit(win_text, TextRect)
-        reward = coinChange[level - 1]
+        reward = coinLevelRewardCalc * coinRewardMultiplierCalc
 
-    if coinsChangeYes == 0:
-        coinsChangeYes += 1
-        coins += reward
+    if game["coinsChangeYes"] == 0:
+        game["coinsChangeYes"] += 1
+        player["coins"] += reward
     screen.blit(coinsOwn_text, (20, 20))
 
 #move spaceship
@@ -253,7 +275,7 @@ def asteroidsmainfunc():
 
 #change health when hit and change gamemode when health == 0
 def healthmainfunc():
-    global health, hit_cooldown, state, lose
+    global hit_cooldown, state, lose
 
     if hit_cooldown > 0:
         hit_cooldown -= 1
@@ -264,11 +286,10 @@ def healthmainfunc():
         distance = np.sqrt(dx ** 2 + dy ** 2)
 
         if distance < ship.length + asteroid.radius and hit_cooldown == 0:
-            health -= damage
+            player["health"] -= damage
             hit_cooldown = 60
-            print(health)
 
-            if health <= 0:
+            if player["health"] <= 0:
                 state = GAME_OVER
                 lose = True
 
