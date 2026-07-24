@@ -68,9 +68,9 @@ upgrades = {
 }
 
 #upgrade values
-healthMaxValues = [100, 120, 140, 160, 180]
+healthMaxValues = [100, 125, 150, 175, 200]
 laserSpeedValues = [15, 20, 25, 30]
-coinRewardMultiplier = [1, 1.5, 2, 3, 5]
+coinRewardMultiplier = [1, 1.25, 1.5, 2, 3]
 
 # calculated upgrade values
 healthMax = healthMaxValues[upgrades["healthUpgrade"]]
@@ -149,9 +149,9 @@ def start_level(selected_level):
     level = selected_level
 
     player["health"] = healthMax
+    game["coinsChangeYes"] = 0
     hit_cooldown = 0
     lose = False
-    player["coins"] = 0
 
     laser.clear()
 
@@ -320,9 +320,11 @@ while running:
                 state = new_state
 
         elif state == GARAGE:
-            new_state = garage.handle_garage_events(event)
+            new_state = garage.handle_garage_events(event, upgrades, player)
 
-            if new_state is not None:
+            if new_state  == "updateUpgrades":
+                set_upgrade_values()
+            elif new_state is not None:
                 state = new_state
 
         elif state == PLAYING:

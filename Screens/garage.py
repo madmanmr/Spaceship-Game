@@ -206,7 +206,7 @@ def draw_garage(screen, mouse_pos, garageTextFunc, title_font, subtitle_font, te
 
     garageTextFunc()
 
-def handle_garage_events(event):
+def handle_garage_events(event, upgrades, player):
     global upgradeState
     if event.type == pg.MOUSEBUTTONDOWN:
         if upgradeState == 0:
@@ -220,4 +220,22 @@ def handle_garage_events(event):
                 upgradeState = 3
         elif exit_button.collidepoint(event.pos):
             upgradeState = 0
+        elif upgradeState == 1:
+            if buy_button_h1.collidepoint(event.pos):
+                if player["coins"] >= 100 and upgrades["healthUpgrade"] < 4:
+                    upgrades["healthUpgrade"] += 1
+                    player["coins"] -= 100
+                    return "updateUpgrades"
+        elif upgradeState == 2:
+            if buy_button_l1.collidepoint(event.pos):
+                if player["coins"] >= 100 and upgrades["laserSpeedUpgrade"] < 3:
+                    upgrades["laserSpeedUpgrade"] += 1
+                    player["coins"] -= 100
+                    return "updateUpgrades"
+        elif upgradeState == 3:
+            if buy_button_m1.collidepoint(event.pos):
+                if player["coins"] >= 100 and upgrades["coinUpgrade"] < 4:
+                    upgrades["coinUpgrade"] += 1
+                    player["coins"] -= 100
+                    return "updateUpgrades"
     return None
