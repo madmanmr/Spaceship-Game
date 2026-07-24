@@ -72,6 +72,27 @@ healthMaxValues = [100, 125, 150, 175, 200]
 laserSpeedValues = [15, 20, 25, 30]
 coinRewardMultiplier = [1, 1.25, 1.5, 2, 3]
 
+#upgrade prices
+healthMaxPrices = [100, 150, 200, 300]
+laserSpeedPrices = [150, 200, 300]
+coinRewardMultiplierPrices = [100, 150, 250, 400]
+
+#making it easier for garage and to be able to use pricves
+upgrade_data = {
+    "health": {
+        "costs": healthMaxPrices,
+        "values": healthMaxValues
+    },
+    "laser_speed": {
+        "costs": laserSpeedPrices,
+        "values": laserSpeedValues
+    },
+    "coin_reward": {
+        "costs": coinRewardMultiplierPrices,
+        "values": coinRewardMultiplier
+    }
+}
+
 # calculated upgrade values
 healthMax = healthMaxValues[upgrades["healthUpgrade"]]
 laserSpeedCalc = laserSpeedValues[upgrades["laserSpeedUpgrade"]]
@@ -320,7 +341,7 @@ while running:
                 state = new_state
 
         elif state == GARAGE:
-            new_state = garage.handle_garage_events(event, upgrades, player)
+            new_state = garage.handle_garage_events(event, upgrade_data, upgrades, player)
 
             if new_state  == "updateUpgrades":
                 set_upgrade_values()
@@ -349,7 +370,7 @@ while running:
         level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
 
     elif state == GARAGE:
-        garage.draw_garage(screen, mouse_pos, garageTextFunc, title_font, subtitle_font, text_font)
+        garage.draw_garage(screen, mouse_pos, garageTextFunc, title_font, subtitle_font, text_font, upgrade_data, upgrades, player)
 
     elif state == PLAYING:
         playing.update_game(screen,backgroundColourCalc,spaceshipmainfunc,asteroidsmainfunc,lasermainfunc,healthmainfunc)
