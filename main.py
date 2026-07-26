@@ -45,6 +45,7 @@ ship = Ship1(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
 asteroids = []
 laser = []
+buy_buttons = []
 
 # player
 player = {
@@ -67,36 +68,54 @@ upgrades = {
     "coinUpgrade": 0
 }
 
-#upgrade values
-healthMaxValues = [100, 125, 150, 175, 200]
-laserSpeedValues = [15, 20, 25, 30]
-coinRewardMultiplier = [1, 1.25, 1.5, 2, 3]
-
-#upgrade prices
-healthMaxPrices = [100, 150, 200, 300]
-laserSpeedPrices = [150, 200, 300]
-coinRewardMultiplierPrices = [100, 150, 250, 400]
-
-#making it easier for garage and to be able to use pricves
+#upgrade lists
+#have all of the data used in garage stored here now so i only need 1 draw function in garage
+#add upgrades here in future
 upgrade_data = {
-    "health": {
-        "costs": healthMaxPrices,
-        "values": healthMaxValues
+    "ship": {
+        "title": "Ship Upgrades",
+        "button": "Ship",
+        "upgrades": {
+            "max_health": {
+                "name": "Increase Health",
+                "level_key": "healthUpgrade",
+                "values": [100,125,150,175,200],
+                "costs": [100,150,200,300]
+            }
+        }
     },
-    "laser_speed": {
-        "costs": laserSpeedPrices,
-        "values": laserSpeedValues
+
+    "laser": {
+        "title": "Laser Upgrades",
+        "button": "Laser",
+        "upgrades": {
+            "laser_speed": {
+                "name": "Laser Speed",
+                "level_key": "laserSpeedUpgrade",
+                "values": [15,20,25,30],
+                "costs": [150,200,300]
+            }
+        }
     },
-    "coin_reward": {
-        "costs": coinRewardMultiplierPrices,
-        "values": coinRewardMultiplier
+
+    "money": {
+        "title": "Economic Upgrades",
+        "button": "Money",
+        "upgrades": {
+            "coin_reward": {
+                "name": "Earn More Coins",
+                "level_key": "coinUpgrade",
+                "values": [1,1.25,1.5,2,3],
+                "costs": [100,150,250,400]
+            }
+        }
     }
 }
 
 # calculated upgrade values
-healthMax = healthMaxValues[upgrades["healthUpgrade"]]
-laserSpeedCalc = laserSpeedValues[upgrades["laserSpeedUpgrade"]]
-coinRewardMultiplierCalc = coinRewardMultiplier[upgrades["coinUpgrade"]]
+healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
+laserSpeedCalc = upgrade_data["laser"]["upgrades"]["laser_speed"]["values"][upgrades["laserSpeedUpgrade"]]
+coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["values"][upgrades["coinUpgrade"]]
 
 #level values
 levelDamage = [10, 20, 50]
@@ -132,10 +151,9 @@ def set_level_values():
 def set_upgrade_values():
     global healthMax, laserSpeedCalc, coinRewardMultiplierCalc
 
-    healthMax = healthMaxValues[upgrades["healthUpgrade"]]
-    laserSpeedCalc = laserSpeedValues[upgrades["laserSpeedUpgrade"]]
-    coinRewardMultiplierCalc = coinRewardMultiplier[upgrades["coinUpgrade"]]
-
+    healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
+    laserSpeedCalc = upgrade_data["laser"]["upgrades"]["laser_speed"]["values"][upgrades["laserSpeedUpgrade"]]
+    coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["values"][upgrades["coinUpgrade"]]
 #creat number of asteroids
 def create_asteroids():
     global asteroid_count
@@ -165,13 +183,13 @@ def reset_ship():
 #start x level using vals set earlier
 def start_level(selected_level):
 
-    global level, health, hit_cooldown, state, lose, coinsChangeYes
+    global level, state, lose
 
     level = selected_level
 
     player["health"] = healthMax
     game["coinsChangeYes"] = 0
-    hit_cooldown = 0
+    game["hit_cooldown"] = 0
     lose = False
 
     laser.clear()
@@ -296,19 +314,19 @@ def asteroidsmainfunc():
 
 #change health when hit and change gamemode when health == 0
 def healthmainfunc():
-    global hit_cooldown, state, lose
+    global state, lose
 
-    if hit_cooldown > 0:
-        hit_cooldown -= 1
+    if game["hitCooldown"] > 0:
+        game["hitCooldown"] -= 1
 
     for asteroid in asteroids:
         dx = ship.x - asteroid.x
         dy = ship.y - asteroid.y
         distance = np.sqrt(dx ** 2 + dy ** 2)
 
-        if distance < ship.length + asteroid.radius and hit_cooldown == 0:
+        if distance < ship.length + asteroid.radius and game["hitCooldown"] == 0:
             player["health"] -= damage
-            hit_cooldown = 60
+            game["hitCooldown"] = 60
 
             if player["health"] <= 0:
                 state = GAME_OVER
@@ -341,7 +359,7 @@ while running:
                 state = new_state
 
         elif state == GARAGE:
-            new_state = garage.handle_garage_events(event, upgrade_data, upgrades, player)
+            new_state = garage.handle_garage_events(event, buy_buttons, upgrade_data, upgrades, player)
 
             if new_state  == "updateUpgrades":
                 set_upgrade_values()
@@ -370,7 +388,7 @@ while running:
         level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
 
     elif state == GARAGE:
-        garage.draw_garage(screen, mouse_pos, garageTextFunc, title_font, subtitle_font, text_font, upgrade_data, upgrades, player)
+        buy_buttons = garage.draw_garage(screen, garage.selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc)
 
     elif state == PLAYING:
         playing.update_game(screen,backgroundColourCalc,spaceshipmainfunc,asteroidsmainfunc,lasermainfunc,healthmainfunc)

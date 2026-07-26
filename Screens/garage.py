@@ -2,7 +2,7 @@ import pygame as pg
 
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK
 
-upgradeState = 0
+selected_category = "home"
 
 def home_buttons():
     exit_button = pg.Rect(0, 0, 150, 50)
@@ -65,219 +65,137 @@ def home_draw(screen, mouse_pos, title_font, subtitle_font, text_font):
     screen.blit(laserText, laserText_rect)
     screen.blit(moneyText, moneyText_rect)
 
-def ship_buttons():
-    buy_button_h1 = pg.Rect(0, 0, 50, 30)
-    back_button_h = pg.Rect(0, 0, 150, 50)
+def create_back_button():
+    back_button = pg.Rect(0, 0, 150, 50)
+    back_button.center = (100, SCREEN_HEIGHT - 75)
 
-    buy_button_h1.center = ((SCREEN_WIDTH / 2) + 50, 255)
-    back_button_h.center = (100, SCREEN_HEIGHT - 75)
+    return back_button
+back_button = create_back_button()
+def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font):
+    category_data = upgrade_data[selected_category]
 
-    return buy_button_h1, back_button_h
-buy_button_h1, back_button_h = ship_buttons()
-def ship_upgrades_draw(screen, mouse_pos, title_font, subtitle_font, text_font, upgrade_data, upgrades, player):
+    #draw title
+    titleText = title_font.render(category_data["title"], True, WHITE)
+    title_rect = titleText.get_rect(center=(SCREEN_WIDTH // 2, 50))
+    screen.blit(titleText, title_rect)
 
-    buy_but_h1_copy = buy_button_h1.copy()
-    back_but_h_copy = back_button_h.copy()
+    #back button
+    back_button_copy = back_button.copy()
 
-    buy_colour_1 = (60, 220, 100)
-    back_colour = (204, 57, 47)
+    backColour = (204, 57, 47)
+    if back_button.collidepoint(mouse_pos):
+        backColour = (173, 44, 35)
+        back_button_copy = back_button.inflate(-3, -1)
 
-    if buy_button_h1.collidepoint(mouse_pos):
-        buy_colour_1 = (40, 180, 80)
-        buy_but_h1_copy = buy_button_h1.inflate(-1, -0.3)
-    if back_button_h.collidepoint(mouse_pos):
-        back_colour = (173, 44, 35)
-        back_but_h_copy = back_button_h.inflate(-3, -1)
+    pg.draw.rect(screen, backColour, back_button_copy, border_radius=10)
 
-    pg.draw.rect(screen, (173, 142, 42), ship_button, border_radius=15)
-    pg.draw.rect(screen, buy_colour_1, buy_but_h1_copy, border_radius=5)
-    pg.draw.rect(screen, back_colour, back_but_h_copy, border_radius=10)
-
-    title = title_font.render("Ship Upgrades", True, WHITE)
-    backText = text_font.render("Back", True, WHITE)
-    shipText = subtitle_font.render("Ship", True, WHITE)
-    buyText = text_font.render("Buy", True, WHITE)
-
-    #max health upgrade text
-    name1Text = subtitle_font.render("Increase Health", True, WHITE)
-    bracketText = text_font.render(f"({upgrades["healthUpgrade"] + 1}/{upgrade_data["health"]["values"][len(healthMaxValues)]}", True, WHITE)
-    currentLevelText = text_font.render(f"Current Level: {upgrade_data["health"]["values"][healthMaxValues] + 1}", True, WHITE)
-    nextLevelText = text_font.render(f"Current Level: {upgrade_data["health"]["values"][healthMaxValues] + 2}", True, WHITE)
-
-    title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 50))
-    backText_rect = backText.get_rect(center=(back_button_h.center))
-    shipText_rect = shipText.get_rect(center=ship_button.center)
-    buyText_rect = buyText.get_rect(center=(buy_button_h1.center))
-
-    name1Text_rect = name1Text.get_rect(center=((SCREEN_WIDTH / 2) + 250, 270))
-    bracketText_rect = bracketText.get_rect(center=(name1Text.x + 150, name1Text.y))
-    currentLevelText_rect = currentLevelText.get_rect(center=(name1Text.x, name1Text.y + 40))
-    nextLevelText_rect = nextLevelText.get_rect(center=(name1Text.x, name1Text.y + 80))
-
-    screen.blit(title, title_rect)
+    backText = text_font.render("Back", True, BLACK)
+    backText_rect = backText.get_rect(center=back_button.center)
     screen.blit(backText, backText_rect)
-    screen.blit(shipText, shipText_rect)
-    screen.blit(buyText, buyText_rect)
 
-    screen.blit(name1Text, name1Text_rect)
-    screen.blit(bracketText, bracketText_rect)
-    screen.blit(currentLevelText, currentLevelText_rect)
-    if (upgrade_data["health"]["values"][healthMaxValues] + 1) < upgrade_data["health"]["values"][len(healthMaxValues)]:
-        screen.blit(nextLevelText, nextLevelText_rect)
+    y = 180
+    buy_buttons = []
 
-def laser_buttons():
-    buy_button_l1 = pg.Rect(0, 0, 50, 30)
-    back_button_l = pg.Rect(0, 0, 150, 50)
+    for upgrade_key, upgrade in category_data["upgrades"].items():
+        level = upgrades[upgrade["level_key"]]
+        values = upgrade["values"]
+        costs = upgrade["costs"]
+        current_value = values[level]
 
-    buy_button_l1.center = ((SCREEN_WIDTH / 2) + 50, 255)
-    back_button_l.center = (100, SCREEN_HEIGHT - 75)
+        nameText = subtitle_font.render(upgrade["name"], True, WHITE)
+        nameText_rect = nameText.get_rect(center=(200, y))
+        screen.blit(nameText, nameText_rect)
 
-    return buy_button_l1, back_button_l
-buy_button_l1, back_button_l = laser_buttons()
-def laser_upgrades_draw(screen, mouse_pos, title_font, subtitle_font, text_font,  upgrade_data, upgrades, player):
-    buy_but_l1_copy = buy_button_l1.copy()
-    back_but_l_copy = back_button_l.copy()
+        currentText = text_font.render(f"Current: {current_value}", True, WHITE)
+        currentText_rect = currentText.get_rect(center=(200, y + 35))
+        screen.blit(currentText, currentText_rect)
 
-    buy_colour_1 = (60, 220, 100)
-    back_colour = (204, 57, 47)
+        if level < len(values) - 1:
+            next_value = values[level + 1]
 
-    if buy_button_l1.collidepoint(mouse_pos):
-        buy_colour_1 = (40, 180, 80)
-        buy_but_l1_copy = buy_button_l1.inflate(-1, -0.3)
-    if back_button_l.collidepoint(mouse_pos):
-        back_colour = (173, 44, 35)
-        back_but_l_copy = back_button_l.inflate(-3, -1)
+            nextText = text_font.render(f"Next: {next_value}", True, WHITE)
+            nextText_rect = nextText.get_rect(center=(200, y + 60))
+            screen.blit(nextText, nextText_rect)
 
-    pg.draw.rect(screen, (173, 142, 42), laser_button, border_radius=15)
-    pg.draw.rect(screen, buy_colour_1, buy_but_l1_copy, border_radius=5)
-    pg.draw.rect(screen, back_colour, back_but_l_copy, border_radius=10)
+            cost = costs[level]
 
-    title = title_font.render("Laser Upgrades", True, WHITE)
-    backText = text_font.render("Back", True, WHITE)
-    laserText = subtitle_font.render("Laser", True, WHITE)
-    buyText = text_font.render("Buy", True, WHITE)
-    name1Text = subtitle_font.render("Laser Speed", True, WHITE)
+            costText = text_font.render(f"Cost: {cost}", True, WHITE)
+            costText_rect = costText.get_rect(center=(200, y + 85))
+            screen.blit(costText, costText_rect)
 
-    title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 50))
-    backText_rect = backText.get_rect(center=(back_button_l.center))
-    laserText_rect = laserText.get_rect(center=laser_button.center)
-    buyText_rect = buyText.get_rect(center=(buy_button_l1.center))
-    name1Text_rect = name1Text.get_rect(center=(buy_button_l1.x + 200, buy_button_l1.y + 15))
+        else:
+            maxText = text_font.render("MAX LEVEL", True, WHITE)
+            maxText_rect = maxText.get_rect(center=(200, y + 60))
+            screen.blit(maxText, maxText_rect)
 
-    screen.blit(title, title_rect)
-    screen.blit(backText, backText_rect)
-    screen.blit(laserText, laserText_rect)
-    screen.blit(buyText, buyText_rect)
-    screen.blit(name1Text, name1Text_rect)
+        buy_button = pg.Rect(0, 0, 80, 35)
+        buy_button.center = (700, y + 50)
+
+        buyColour = (60, 220, 100)
+        if buy_button.collidepoint(mouse_pos):
+            buyColour = (40, 180, 80)
+            buy_button.inflate_ip(-1, -0.33)
+
+        pg.draw.rect(screen, buyColour, buy_button, border_radius=5)
+
+        buy_text = text_font.render("Buy", True, BLACK)
+        screen.blit(buy_text, buy_text.get_rect(center=buy_button.center))
+
+        y += 140
+        button_data = {
+            "rect": buy_button,
+            "data": upgrade
+        }
+        buy_buttons.append(button_data)
+
+    return buy_buttons
 
 
-def money_buttons():
-    buy_button_m1 = pg.Rect(0, 0, 50, 30)
-    back_button_m = pg.Rect(0, 0, 150, 50)
-
-    buy_button_m1.center = ((SCREEN_WIDTH / 2) + 50, 255)
-    back_button_m.center = (100, SCREEN_HEIGHT - 75)
-
-    return buy_button_m1, back_button_m
-buy_button_m1, back_button_m = money_buttons()
-def money_upgrades_draw(screen, mouse_pos, title_font, subtitle_font, text_font,  upgrade_data, upgrades, player):
-    buy_but_m1_copy = buy_button_m1.copy()
-    back_but_m_copy = back_button_m.copy()
-
-    buy_colour_1 = (60, 220, 100)
-    back_colour = (204, 57, 47)
-
-    if buy_button_m1.collidepoint(mouse_pos):
-        buy_colour_1 = (40, 180, 80)
-        buy_but_m1_copy = buy_button_m1.inflate(-1, -0.3)
-    if back_button_m.collidepoint(mouse_pos):
-        back_colour = (173, 44, 35)
-        back_but_m_copy = back_button_m.inflate(-3, -1)
-
-    pg.draw.rect(screen, (173, 142, 42), money_button, border_radius=15)
-    pg.draw.rect(screen, buy_colour_1, buy_but_m1_copy, border_radius=5)
-    pg.draw.rect(screen, back_colour, back_but_m_copy, border_radius=10)
-
-    title = title_font.render("Economic Upgrades", True, WHITE)
-    backText = text_font.render("Back", True, WHITE)
-    moneyText = subtitle_font.render("Money", True, WHITE)
-    buyText = text_font.render("Buy", True, WHITE)
-    name1Text = subtitle_font.render("Earn More Coins", True, WHITE)
-
-    title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 50))
-    backText_rect = backText.get_rect(center=(back_button_m.center))
-    moneyText_rect = moneyText.get_rect(center=money_button.center)
-    buyText_rect = buyText.get_rect(center=(buy_button_m1.center))
-    name1Text_rect = name1Text.get_rect(center=(buy_button_m1.x + 200, buy_button_m1.y + 15))
-
-    screen.blit(title, title_rect)
-    screen.blit(backText, backText_rect)
-    screen.blit(moneyText, moneyText_rect)
-    screen.blit(buyText, buyText_rect)
-    screen.blit(name1Text, name1Text_rect)
-
-def draw_garage(screen, mouse_pos, garageTextFunc, title_font, subtitle_font, text_font,  upgrade_data, upgrades, player):
+def draw_garage(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc):
 
     screen.fill((15, 15, 30))
 
-    draw_functions = {
-        0: home_draw,
-        1: ship_upgrades_draw,
-        2: laser_upgrades_draw,
-        3: money_upgrades_draw
-    }
+    buy_buttons = []
 
-    draw_functions[upgradeState](screen, mouse_pos, title_font, subtitle_font, text_font, upgrade_data)
+    if selected_category == "home":
+        home_draw(screen, mouse_pos, title_font, subtitle_font, text_font)
+    else:
+        buy_buttons = upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font)
 
     garageTextFunc()
 
-def handle_garage_events(event, upgrade_data, upgrades, player):
-    global upgradeState
+    return buy_buttons
+
+def handle_garage_events(event, buy_buttons, upgrade_data, upgrades, player):
+    global selected_category
     if event.type == pg.MOUSEBUTTONDOWN:
-        if upgradeState == 0:
+        if selected_category == "home":
             if exit_button.collidepoint(event.pos):
                 return "menu"
             elif ship_button.collidepoint(event.pos):
-                upgradeState = 1
+                selected_category = "ship"
             elif laser_button.collidepoint(event.pos):
-                upgradeState = 2
+                selected_category = "laser"
             elif money_button.collidepoint(event.pos):
-                upgradeState = 3
-        elif exit_button.collidepoint(event.pos):
-            upgradeState = 0
-        elif upgradeState == 1:
-            if buy_button_h1.collidepoint(event.pos):
-                level = upgrades["healthUpgrade"]
+                selected_category = "money"
+        else:
+            # back button
+            if back_button.collidepoint(event.pos):
+                    selected_category = "home"
+            # buy buttons
+            for button in buy_buttons:
+                if button["rect"].collidepoint(event.pos):
+                    upgrade = button["data"]
 
-                if level < len(upgrade_data["health"]["costs"]):
-                    cost = upgrade_data["health"]["costs"][level]
+                    level = upgrades[upgrade["level_key"]]
 
-                    if player["coins"] >= cost:
-                        player["coins"] -= cost
-                        upgrades["healthUpgrade"] += 1
-                        return "updateUpgrades"
+                    if level < len(upgrade["values"]) - 1:
 
-        elif upgradeState == 2:
-            if buy_button_l1.collidepoint(event.pos):
-                level = upgrades["laserSpeedUpgrade"]
+                        cost = upgrade["costs"][level]
 
-                if level < len(upgrade_data["laser_speed"]["costs"]):
-                    cost = upgrade_data["laser_speed"]["costs"][level]
+                        if player["coins"] >= cost:
+                            player["coins"] -= cost
+                            upgrades[upgrade["level_key"]] += 1
 
-                    if player["coins"] >= cost:
-                        player["coins"] -= cost
-                        upgrades["laserSpeedUpgrade"] += 1
-                        return "updateUpgrades"
-
-        elif upgradeState == 3:
-            if buy_button_m1.collidepoint(event.pos):
-                level = upgrades["coinUpgrade"]
-
-                if level < len(upgrade_data["coin_reward"]["costs"]):
-                    cost = upgrade_data["coin_reward"]["costs"][level]
-
-                    if player["coins"] >= cost:
-                        player["coins"] -= cost
-                        upgrades["coinUpgrade"] += 1
-                        return "updateUpgrades"
+                            return "updateUpgrades"
     return None
