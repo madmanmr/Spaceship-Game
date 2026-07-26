@@ -43,8 +43,8 @@ def draw_menu(screen, mouse_pos, title_font, subtitle_font):
     pg.draw.rect(screen,garage_colour,garage_copy_rect,border_radius=15)
 
     title = title_font.render("SPACESHIP GAME",True,WHITE)
-    levels_text = subtitle_font.render("Levels",True,BLACK)
-    garage_text = subtitle_font.render("Garage", True,BLACK)
+    levels_text = subtitle_font.render("Levels",True,WHITE)
+    garage_text = subtitle_font.render("Garage", True,WHITE)
 
     title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 150))
     levels_rect = levels_text.get_rect(center=levelSelectionBut.center)

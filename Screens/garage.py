@@ -1,6 +1,6 @@
 import pygame as pg
 
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK, YELLOW, LIGHTBLUE
 
 selected_category = "home"
 
@@ -11,9 +11,9 @@ def home_buttons():
     money_button = pg.Rect(0, 0, 220, 70)
 
     exit_button.center = (100, SCREEN_HEIGHT - 75)
-    ship_button.center = (300, 255)
-    laser_button.center = (300, 400)
-    money_button.center = (300, 545)
+    ship_button.center = ((SCREEN_WIDTH / 2), 255)
+    laser_button.center = ((SCREEN_WIDTH / 2), 400)
+    money_button.center = ((SCREEN_WIDTH / 2), 545)
     return exit_button, ship_button, laser_button, money_button
 exit_button, ship_button, laser_button, money_button = home_buttons()
 def home_draw(screen, mouse_pos, title_font, subtitle_font, text_font):
@@ -102,34 +102,34 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
         costs = upgrade["costs"]
         current_value = values[level]
 
-        nameText = subtitle_font.render(upgrade["name"], True, WHITE)
+        nameText = subtitle_font.render(upgrade["name"], True, LIGHTBLUE)
         nameText_rect = nameText.get_rect(center=(200, y))
         screen.blit(nameText, nameText_rect)
 
         currentText = text_font.render(f"Current: {current_value}", True, WHITE)
-        currentText_rect = currentText.get_rect(center=(200, y + 35))
+        currentText_rect = currentText.get_rect(center=(200, y + 40))
         screen.blit(currentText, currentText_rect)
 
         if level < len(values) - 1:
             next_value = values[level + 1]
 
             nextText = text_font.render(f"Next: {next_value}", True, WHITE)
-            nextText_rect = nextText.get_rect(center=(200, y + 60))
+            nextText_rect = nextText.get_rect(center=(200, y + 67))
             screen.blit(nextText, nextText_rect)
 
             cost = costs[level]
 
-            costText = text_font.render(f"Cost: {cost}", True, WHITE)
-            costText_rect = costText.get_rect(center=(200, y + 85))
+            costText = text_font.render(f"Cost: {cost}", True, YELLOW)
+            costText_rect = costText.get_rect(center=(200, y + 97))
             screen.blit(costText, costText_rect)
 
         else:
             maxText = text_font.render("MAX LEVEL", True, WHITE)
-            maxText_rect = maxText.get_rect(center=(200, y + 60))
+            maxText_rect = maxText.get_rect(center=(200, y + 65))
             screen.blit(maxText, maxText_rect)
 
         buy_button = pg.Rect(0, 0, 80, 35)
-        buy_button.center = (700, y + 50)
+        buy_button.center = (500, y + 48.5)
 
         buyColour = (60, 220, 100)
         if buy_button.collidepoint(mouse_pos):
