@@ -1,6 +1,6 @@
 import pygame as pg
 
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK, YELLOW, LIGHTBLUE
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK, YELLOW, LIGHTBLUE, GREY, fill3, border3
 
 selected_category = "home"
 
@@ -71,13 +71,14 @@ def create_back_button():
 
     return back_button
 back_button = create_back_button()
-def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font):
+def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, player):
     category_data = upgrade_data[selected_category]
 
     #draw title
     titleText = title_font.render(category_data["title"], True, WHITE)
     title_rect = titleText.get_rect(center=(SCREEN_WIDTH // 2, 50))
     screen.blit(titleText, title_rect)
+
 
     #back button
     back_button_copy = back_button.copy()
@@ -96,52 +97,64 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
     y = 180
     buy_buttons = []
 
+    buyText = "Buy"
+    buyColour = (60, 220, 100)
+
+
     for upgrade_key, upgrade in category_data["upgrades"].items():
         level = upgrades[upgrade["level_key"]]
         values = upgrade["values"]
         costs = upgrade["costs"]
         current_value = values[level]
 
+        # draw blocks for upgrades to go over
+        card_rect = pg.Rect(60, y - 32, 520, 184)
+        pg.draw.rect(screen, fill3, card_rect, border_radius=12)
+        pg.draw.rect(screen, border3, card_rect, width=2, border_radius=12)
+
         nameText = subtitle_font.render(upgrade["name"], True, LIGHTBLUE)
-        nameText_rect = nameText.get_rect(center=(200, y))
+        nameText_rect = nameText.get_rect(topleft=(100, y))
         screen.blit(nameText, nameText_rect)
 
         currentText = text_font.render(f"Current: {current_value}", True, WHITE)
-        currentText_rect = currentText.get_rect(center=(200, y + 40))
+        currentText_rect = currentText.get_rect(topleft=(100, y + 40))
         screen.blit(currentText, currentText_rect)
 
         if level < len(values) - 1:
             next_value = values[level + 1]
 
-            nextText = text_font.render(f"Next: {next_value}", True, WHITE)
-            nextText_rect = nextText.get_rect(center=(200, y + 67))
+            nextText = text_font.render(f"Next: {next_value}", True, (60, 220, 100))
+            nextText_rect = nextText.get_rect(topleft=(100, y + 67))
             screen.blit(nextText, nextText_rect)
 
             cost = costs[level]
 
             costText = text_font.render(f"Cost: {cost}", True, YELLOW)
-            costText_rect = costText.get_rect(center=(200, y + 97))
+            costText_rect = costText.get_rect(topleft=(100, y + 97))
             screen.blit(costText, costText_rect)
+            if player["coins"] < cost:
+                buyColour = GREY
 
         else:
-            maxText = text_font.render("MAX LEVEL", True, WHITE)
-            maxText_rect = maxText.get_rect(center=(200, y + 65))
+            maxText = text_font.render("MAX LEVEL", True, (230, 80, 80))
+            maxText_rect = maxText.get_rect(topleft=(100, y + 65))
             screen.blit(maxText, maxText_rect)
+            buyText = "MAX"
+            buyColour = GREY
 
         buy_button = pg.Rect(0, 0, 80, 35)
-        buy_button.center = (500, y + 48.5)
+        buy_button.center = (500, y + 97)
 
-        buyColour = (60, 220, 100)
-        if buy_button.collidepoint(mouse_pos):
+        if buy_button.collidepoint(mouse_pos) and buyColour == (60, 220, 100):
             buyColour = (40, 180, 80)
             buy_button.inflate_ip(-1, -0.33)
 
         pg.draw.rect(screen, buyColour, buy_button, border_radius=5)
 
-        buy_text = text_font.render("Buy", True, BLACK)
+        buy_text = text_font.render(buyText, True, BLACK)
         screen.blit(buy_text, buy_text.get_rect(center=buy_button.center))
 
-        y += 140
+        y += 200
         button_data = {
             "rect": buy_button,
             "data": upgrade
@@ -151,7 +164,7 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
     return buy_buttons
 
 
-def draw_garage(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc):
+def draw_garage(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc, player):
 
     screen.fill((15, 15, 30))
 
@@ -160,7 +173,7 @@ def draw_garage(screen, selected_category, mouse_pos, upgrade_data, upgrades, ti
     if selected_category == "home":
         home_draw(screen, mouse_pos, title_font, subtitle_font, text_font)
     else:
-        buy_buttons = upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font)
+        buy_buttons = upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, player)
 
     garageTextFunc()
 
