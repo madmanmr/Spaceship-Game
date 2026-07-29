@@ -95,6 +95,7 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
     screen.blit(backText, backText_rect)
 
     y = 180
+    x = 60
     buy_buttons = []
 
     buyText = "Buy"
@@ -108,42 +109,42 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
         current_value = values[level]
 
         # draw blocks for upgrades to go over
-        card_rect = pg.Rect(60, y - 32, 520, 184)
+        card_rect = pg.Rect(x, y - 32, 520, 184)
         pg.draw.rect(screen, fill3, card_rect, border_radius=12)
         pg.draw.rect(screen, border3, card_rect, width=2, border_radius=12)
 
         nameText = subtitle_font.render(upgrade["name"], True, LIGHTBLUE)
-        nameText_rect = nameText.get_rect(topleft=(100, y))
+        nameText_rect = nameText.get_rect(topleft=(x + 40, y))
         screen.blit(nameText, nameText_rect)
 
         currentText = text_font.render(f"Current: {current_value}", True, WHITE)
-        currentText_rect = currentText.get_rect(topleft=(100, y + 40))
+        currentText_rect = currentText.get_rect(topleft=(x + 40, y + 40))
         screen.blit(currentText, currentText_rect)
 
         if level < len(values) - 1:
             next_value = values[level + 1]
 
             nextText = text_font.render(f"Next: {next_value}", True, (60, 220, 100))
-            nextText_rect = nextText.get_rect(topleft=(100, y + 67))
+            nextText_rect = nextText.get_rect(topleft=(x + 40, y + 67))
             screen.blit(nextText, nextText_rect)
 
             cost = costs[level]
 
             costText = text_font.render(f"Cost: {cost}", True, YELLOW)
-            costText_rect = costText.get_rect(topleft=(100, y + 97))
+            costText_rect = costText.get_rect(topleft=(x + 40, y + 97))
             screen.blit(costText, costText_rect)
             if player["coins"] < cost:
                 buyColour = GREY
 
         else:
             maxText = text_font.render("MAX LEVEL", True, (230, 80, 80))
-            maxText_rect = maxText.get_rect(topleft=(100, y + 65))
+            maxText_rect = maxText.get_rect(topleft=(x + 40, y + 65))
             screen.blit(maxText, maxText_rect)
             buyText = "MAX"
             buyColour = GREY
 
         buy_button = pg.Rect(0, 0, 80, 35)
-        buy_button.center = (500, y + 97)
+        buy_button.center = (x + 440, y + 97)
 
         if buy_button.collidepoint(mouse_pos) and buyColour == (60, 220, 100):
             buyColour = (40, 180, 80)
@@ -154,7 +155,11 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
         buy_text = text_font.render(buyText, True, BLACK)
         screen.blit(buy_text, buy_text.get_rect(center=buy_button.center))
 
-        y += 200
+        if y == 380:
+            y = 180
+            x = 650
+        else:
+            y = 380
         button_data = {
             "rect": buy_button,
             "data": upgrade
