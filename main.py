@@ -58,7 +58,11 @@ game = {
     "hitCooldown": 0,
     "shootCooldown": 0,
     "coinsChangeYes": 0,
-    "asteroidCount": 0
+    "asteroidCount": 0,
+    "asteroidsSpawned": 0,
+    "asteroidCountMax": 0,
+    "asteroidSpawnTimer": 0,
+    "asteroidsLeft": 0
 }
 # level
 level = 1
@@ -131,6 +135,7 @@ coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["val
 levelDamage = [10, 20, 50]
 asteroidSpeedMax = [10, 15, 20]
 asteroidSpeedMin = [5, 8, 15]
+asteroidSpawnInterval = [180, 120, 60]
 backgroundColour = [
     (15, 15, 30),
     (58, 43, 87),
@@ -142,17 +147,19 @@ coinLevelReward = [100, 300, 500]
 damage = levelDamage[level - 1]
 asteroidCalcMax = asteroidSpeedMax[level - 1]
 asteroidCalcMin = asteroidSpeedMin[level - 1]
+asteroidSpawnIntervalCalc = asteroidSpawnInterval[level -1]
 backgroundColourCalc = backgroundColour[level - 1]
 coinLevelRewardCalc = coinLevelReward[level - 1]
 
 #funcs
 #calc all different vals for start of each level
 def set_level_values():
-    global damage, asteroidCalcMax, asteroidCalcMin, backgroundColourCalc, coinLevelRewardCalc
+    global damage, asteroidCalcMax, asteroidCalcMin, asteroidSpawnIntervalCalc, backgroundColourCalc, coinLevelRewardCalc
 
     damage = levelDamage[level - 1]
     asteroidCalcMax = asteroidSpeedMax[level - 1]
     asteroidCalcMin = asteroidSpeedMin[level - 1]
+    asteroidSpawnIntervalCalc = asteroidSpawnInterval[level - 1]
     backgroundColourCalc = backgroundColour[level - 1]
     coinLevelRewardCalc = coinLevelReward[level - 1]
 
@@ -167,20 +174,15 @@ def set_upgrade_values():
 
 #creat number of asteroids
 def create_asteroids():
-    global asteroid_count
+    x = 100
+    y = np.random.randint(0, SCREEN_HEIGHT)
 
-    asteroids.clear()
-    asteroid_count = level * 5
+    asteroid = Asteroid(x, y)
 
-    for _ in range(asteroid_count):
-        x = np.random.randint(0, SCREEN_WIDTH)
-        y = np.random.randint(0, SCREEN_HEIGHT)
+    asteroid.angle = np.radians(np.random.randint(-20, 21))
+    asteroid.speed = np.random.randint(asteroidCalcMin, asteroidCalcMax)
 
-        asteroid = Asteroid(x, y)
-        asteroid.angle = np.radians(np.random.randint(-20, 21))
-        asteroid.speed = np.random.randint(asteroidCalcMin,asteroidCalcMax)
-
-        asteroids.append(asteroid)
+    asteroids.append(asteroid)
 
 #move ship to centre and stop
 def reset_ship():
@@ -199,16 +201,25 @@ def start_level(selected_level):
     level = selected_level
 
     player["health"] = healthMax
+
     game["coinsChangeYes"] = 0
-    game["hit_cooldown"] = 0
+    game["hitCooldown"] = 0
+
+    # asteroid spawning setup
+    game["asteroidsSpawned"] = 0
+    game["asteroidCount"] = 0
+    game["asteroidCountMax"] = level * 5
+    game["asteroidSpawnTimer"] = asteroidSpawnIntervalCalc
+    game["asteroidsLeft"] = game["asteroidCountMax"]
+
     lose = False
 
     laser.clear()
+    asteroids.clear()
 
     reset_ship()
     set_level_values()
     set_upgrade_values()
-    create_asteroids()
 
     state = PLAYING
 
@@ -221,7 +232,7 @@ def start_new_game():
 def playingTextFunc():
     level_text = subtitle_font.render(f"{level}", True, WHITE)
     coinsOwn_text = text_font.render(f"Coins: {player["coins"]}", True, YELLOW)
-    asteroidsLeft_text = text_font.render(f"Asteroids left: {asteroid_count}", True, WHITE)
+    asteroidsLeft_text = text_font.render(f"Asteroids left: {game["asteroidsLeft"]}", True, WHITE)
     health_text = text_font.render(f"Health: {player["health"]}", True, WHITE)
 
     screen.blit(level_text, ((SCREEN_WIDTH / 2), 20))
@@ -286,8 +297,11 @@ def spaceshipmainfunc():
 def lasermainfunc():
     keys = pg.key.get_pressed()
 
-    for laser_obj in laser:
+    for laser_obj in laser[:]:
         laser_obj.update()
+
+        #if laser_obj.off_screen: #saves potatoes
+            #laser.remove(laser_obj)
 
     if keys[pg.K_SPACE] and game["shootCooldown"] <= 0:
         laser.append(Laser(
@@ -303,7 +317,16 @@ def lasermainfunc():
 
 #detect collision with laser and asteroid and move asteroids
 def asteroidsmainfunc():
-    global asteroid_count
+    # asteroid spawning
+    if game["asteroidsSpawned"] < game["asteroidCountMax"]:
+        if game["asteroidSpawnTimer"] > 0:
+            game["asteroidSpawnTimer"] -= 1
+        else:
+            create_asteroids()
+            game["asteroidsSpawned"] += 1
+            game["asteroidCount"] += 1
+            game["asteroidSpawnTimer"] = asteroidSpawnIntervalCalc
+
     for asteroid in asteroids[:]:
         asteroid.update()
 
@@ -320,7 +343,8 @@ def asteroidsmainfunc():
                     asteroids.remove(asteroid)
                     laser.remove(laser_obj)
 
-                    asteroid_count -= 1
+                    game["asteroidCount"] = len(asteroids)
+                    game["asteroidsLeft"] -= 1
                     destroyed = True
                     break
 
@@ -397,7 +421,7 @@ while running:
                 state = new_state
 
         elif state == PLAYING:
-            new_state = playing.handle_game_events(event, asteroid_count)
+            new_state = playing.handle_game_events(event, game)
 
             if new_state is not None:
                 state = new_state

@@ -30,9 +30,8 @@ def update_game(screen, background_colour, spaceship_main_func, asteroids_main_f
     laser_main_func()
     health_main_func()
 
-def handle_game_events(event, asteroid_count):
-
-    if asteroid_count == 0:
+def handle_game_events(event, game):
+    if (game["asteroidsSpawned"] == game["asteroidCountMax"] and game["asteroidCount"] == 0):
         return "game over"
 
     return None
