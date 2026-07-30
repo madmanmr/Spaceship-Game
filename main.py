@@ -22,6 +22,7 @@ pg.init()
 
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pg.time.Clock()
+keys = pg.key.get_pressed()
 
 title_font = pg.font.SysFont(None, 80)
 subtitle_font = pg.font.SysFont(None, 48)
@@ -55,6 +56,7 @@ player = {
 # game
 game = {
     "hitCooldown": 0,
+    "shootCooldown": 0,
     "coinsChangeYes": 0,
     "asteroidCount": 0
 }
@@ -65,6 +67,7 @@ level = 1
 upgrades = {
     "healthUpgrade": 0,
     "laserSpeedUpgrade": 0,
+    "fireRateUpgrade": 0,
     "coinUpgrade": 0
 }
 
@@ -92,8 +95,14 @@ upgrade_data = {
             "laser_speed": {
                 "name": "Laser Speed",
                 "level_key": "laserSpeedUpgrade",
-                "values": [15,20,25,30],
+                "values": [10,15,20,25],
                 "costs": [150,200,300]
+            },
+            "fire_rate": {
+                "name": "Fire Rate",
+                "level_key": "fireRateUpgrade",
+                "values": [60,30,15,6,3],
+                "costs": [150,200,400,750]
             }
         }
     },
@@ -115,6 +124,7 @@ upgrade_data = {
 # calculated upgrade values
 healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
 laserSpeedCalc = upgrade_data["laser"]["upgrades"]["laser_speed"]["values"][upgrades["laserSpeedUpgrade"]]
+fireRateCalc = upgrade_data["laser"]["upgrades"]["fire_rate"]["values"][upgrades["fireRateUpgrade"]]
 coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["values"][upgrades["coinUpgrade"]]
 
 #level values
@@ -146,14 +156,15 @@ def set_level_values():
     backgroundColourCalc = backgroundColour[level - 1]
     coinLevelRewardCalc = coinLevelReward[level - 1]
 
-
 #calc vals of upgrades before level starts
 def set_upgrade_values():
-    global healthMax, laserSpeedCalc, coinRewardMultiplierCalc
+    global healthMax, laserSpeedCalc, fireRateCalc, coinRewardMultiplierCalc
 
     healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
     laserSpeedCalc = upgrade_data["laser"]["upgrades"]["laser_speed"]["values"][upgrades["laserSpeedUpgrade"]]
+    fireRateCalc = upgrade_data["laser"]["upgrades"]["fire_rate"]["values"][upgrades["fireRateUpgrade"]]
     coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["values"][upgrades["coinUpgrade"]]
+
 #creat number of asteroids
 def create_asteroids():
     global asteroid_count
@@ -273,8 +284,22 @@ def spaceshipmainfunc():
 
 #,ove lasers
 def lasermainfunc():
+    keys = pg.key.get_pressed()
+
     for laser_obj in laser:
         laser_obj.update()
+
+    if keys[pg.K_SPACE] and game["shootCooldown"] <= 0:
+        laser.append(Laser(
+            ship.x + np.cos(ship.angle) * ship.length,
+            ship.y + np.sin(ship.angle) * ship.length,
+            ship.angle,
+            laserSpeedCalc
+        ))
+        game["shootCooldown"] = fireRateCalc
+
+    if game["shootCooldown"] > 0:
+        game["shootCooldown"] -= 1
 
 #detect collision with laser and asteroid and move asteroids
 def asteroidsmainfunc():
@@ -358,7 +383,12 @@ while running:
             elif new_state is not None:
                 state = new_state
 
+
         elif state == GARAGE:
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_p:
+                    player["coins"] = 5000
+
             new_state = garage.handle_garage_events(event, buy_buttons, upgrade_data, upgrades, player)
 
             if new_state  == "updateUpgrades":
@@ -367,7 +397,7 @@ while running:
                 state = new_state
 
         elif state == PLAYING:
-            new_state = playing.handle_game_events(event,ship,laser,Laser,laserSpeedCalc,asteroid_count)
+            new_state = playing.handle_game_events(event, asteroid_count)
 
             if new_state is not None:
                 state = new_state
