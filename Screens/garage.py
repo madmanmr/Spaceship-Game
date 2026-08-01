@@ -155,11 +155,11 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
         buy_text = text_font.render(buyText, True, BLACK)
         screen.blit(buy_text, buy_text.get_rect(center=buy_button.center))
 
-        if y == 380:
+        if y == 450:
             y = 180
-            x = 650
+            x = 620
         else:
-            y = 380
+            y = 450
         button_data = {
             "rect": buy_button,
             "data": upgrade

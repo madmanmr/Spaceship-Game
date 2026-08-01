@@ -70,8 +70,11 @@ level = 1
 # upgrades pass to garage
 upgrades = {
     "healthUpgrade": 0,
+
     "laserSpeedUpgrade": 0,
     "fireRateUpgrade": 0,
+    "laserDamageUpgrade": 0,
+
     "coinUpgrade": 0
 }
 
@@ -107,6 +110,12 @@ upgrade_data = {
                 "level_key": "fireRateUpgrade",
                 "values": [60,30,15,6,3],
                 "costs": [150,200,400,750]
+            },
+            "laser_damage": {
+                "name": "Laser Damage",
+                "level_key": "laserDamageUpgrade",
+                "values": [1,2,3,4,5],
+                "costs": [500,750,1100,1500]
             }
         }
     },
@@ -127,21 +136,27 @@ upgrade_data = {
 
 # calculated upgrade values
 healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
+
 laserSpeedCalc = upgrade_data["laser"]["upgrades"]["laser_speed"]["values"][upgrades["laserSpeedUpgrade"]]
 fireRateCalc = upgrade_data["laser"]["upgrades"]["fire_rate"]["values"][upgrades["fireRateUpgrade"]]
+laserDamageCalc = upgrade_data["laser"]["upgrades"]["laser_damage"]["values"][upgrades["laserDamageUpgrade"]]
+
 coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["values"][upgrades["coinUpgrade"]]
 
 #level values
-levelDamage = [10, 20, 50]
-asteroidSpeedMax = [10, 15, 20]
-asteroidSpeedMin = [5, 8, 15]
-asteroidSpawnInterval = [180, 120, 60]
-backgroundColour = [
-    (15, 15, 30),
-    (58, 43, 87),
-    (79, 43, 97)
+levelDamage = [10, 20, 50, 100, 150, 200]
+asteroidSpeedMax = [10, 15, 20, 30, 45, 60]
+asteroidSpeedMin = [5, 8, 15, 20, 35, 45]
+asteroidSpawnInterval = [180, 120, 60, 30, 15, 6]
+backgroundColour = [ # used gpt to expand colours
+    (15, 15, 30),   # Level 1
+    (36, 29, 58),   # Level 2 (between 1 & 3)
+    (58, 43, 87),   # Level 3
+    (69, 43, 92),   # Level 4 (between 3 & 5)
+    (79, 43, 97),   # Level 5
+    (100, 43, 110)  # Level 6 (slightly more vibrant)
 ]
-coinLevelReward = [100, 300, 500]
+coinLevelReward = [100, 300, 500, 750, 1000, 1500]
 
 #calculate level values
 damage = levelDamage[level - 1]
@@ -165,11 +180,14 @@ def set_level_values():
 
 #calc vals of upgrades before level starts
 def set_upgrade_values():
-    global healthMax, laserSpeedCalc, fireRateCalc, coinRewardMultiplierCalc
+    global healthMax, laserSpeedCalc, fireRateCalc, coinRewardMultiplierCalc, laserDamageCalc
 
     healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
+
     laserSpeedCalc = upgrade_data["laser"]["upgrades"]["laser_speed"]["values"][upgrades["laserSpeedUpgrade"]]
     fireRateCalc = upgrade_data["laser"]["upgrades"]["fire_rate"]["values"][upgrades["fireRateUpgrade"]]
+    laserDamageCalc = upgrade_data["laser"]["upgrades"]["laser_damage"]["values"][upgrades["laserDamageUpgrade"]]
+
     coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["values"][upgrades["coinUpgrade"]]
 
 #creat number of asteroids
@@ -317,7 +335,7 @@ def lasermainfunc():
 
 #detect collision with laser and asteroid and move asteroids
 def asteroidsmainfunc():
-    # asteroid spawning
+    #asteroid spawning
     if game["asteroidsSpawned"] < game["asteroidCountMax"]:
         if game["asteroidSpawnTimer"] > 0:
             game["asteroidSpawnTimer"] -= 1
@@ -399,7 +417,7 @@ while running:
                 state = new_state
 
         elif state == LEVEL_SELECT:
-            new_state, selected_level = (level_select.handle_level_selection_events(event))
+            new_state, selected_level = (level_select.handle_level_selection_events(event, levelButtons))
 
             if selected_level is not None:
                 start_level(selected_level)
@@ -439,7 +457,7 @@ while running:
         menu.draw_menu(screen, mouse_pos, title_font, subtitle_font)
 
     elif state == LEVEL_SELECT:
-        level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
+        levelButtons = level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
 
     elif state == GARAGE:
         buy_buttons = garage.draw_garage(screen, garage.selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc, player)
