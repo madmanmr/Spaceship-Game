@@ -30,7 +30,7 @@ def make_level_select_buttons(screen, mouse_pos, title_font, text_font):
         screen.blit(levelText,levelText.get_rect(center=levelBut.center))
 
         if x < 1000:
-            x += 200
+            x += 400
         else:
             x = 200
             y = 500
