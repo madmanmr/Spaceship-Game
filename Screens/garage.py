@@ -98,11 +98,14 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
     x = 60
     buy_buttons = []
 
-    buyText = "Buy"
-    buyColour = (60, 220, 100)
+    #buyText = "Buy"
+    #buyColour = (60, 220, 100)
 
 
     for upgrade_key, upgrade in category_data["upgrades"].items():
+        buyText = "Buy"
+        buyColour = (60, 220, 100)
+
         level = upgrades[upgrade["level_key"]]
         values = upgrade["values"]
         costs = upgrade["costs"]
