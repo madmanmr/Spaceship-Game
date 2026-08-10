@@ -24,11 +24,12 @@ screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pg.time.Clock()
 keys = pg.key.get_pressed()
 
-title_font = pg.font.SysFont(None, 80)
-subtitle_font = pg.font.SysFont(None, 48)
-text_font = pg.font.SysFont(None, 35)
+title_font = pg.font.SysFont("bahnschrift", 80, bold=True)
+subtitle_font = pg.font.SysFont("bahnschrift", 45, bold=True)
+text_font = pg.font.SysFont("consolas", 30)
+small_font = pg.font.SysFont("segoe ui", 22)
 
-
+print(pg.font.get_fonts())
 # states
 MENU = "menu"
 LEVEL_SELECT = "level selection"
@@ -249,7 +250,7 @@ def start_new_game():
 #text on screen while playing
 def playingTextFunc():
     level_text = subtitle_font.render(f"{level}", True, WHITE)
-    coinsOwn_text = text_font.render(f"Coins: {player["coins"]}", True, YELLOW)
+    coinsOwn_text = text_font.render(f"Coins: {player["coins"]}", True, ACCENT_YELLOW)
     asteroidsLeft_text = text_font.render(f"Asteroids left: {game["asteroidsLeft"]}", True, WHITE)
     health_text = text_font.render(f"Health: {player["health"]}", True, WHITE)
 
@@ -260,13 +261,13 @@ def playingTextFunc():
 
 #garage texas
 def garageTextFunc():
-    coinsOwn_text = text_font.render(f"Coins: {player['coins']}", True, YELLOW)
+    coinsOwn_text = text_font.render(f"Coins: {player['coins']}", True, ACCENT_YELLOW)
 
     screen.blit(coinsOwn_text, (20, 20))
 
 #text when game done
 def gameOverTextFunc():
-    coinsOwn_text = text_font.render(f"Coins: {player['coins']}", True, YELLOW)
+    coinsOwn_text = text_font.render(f"Coins: {player['coins']}", True, ACCENT_YELLOW)
     win_text = title_font.render("YOU WIN!", True, WHITE)
     lose_text = title_font.render("YOU LOSE!", True, WHITE)
 

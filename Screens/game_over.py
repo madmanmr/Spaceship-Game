@@ -1,5 +1,5 @@
 import pygame as pg
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, YELLOW
+from settings import *
 
 
 def create_game_over_buttons():

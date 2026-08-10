@@ -1,6 +1,6 @@
 import pygame as pg
 
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK, YELLOW, LIGHTBLUE, GREY, fill3, border3
+from settings import *
 
 selected_category = "home"
 
@@ -24,22 +24,22 @@ def home_draw(screen, mouse_pos, title_font, subtitle_font, text_font):
     money_but_copy = money_button.copy()
 
 
-    back_colour = (204, 57, 47)
-    ship_colour = (219, 190, 57)
-    laser_colour = (219, 190, 57)
-    money_colour = (219, 190, 57)
+    back_colour = ACCENT_RED
+    ship_colour = ACCENT_PURPLE
+    laser_colour = ACCENT_PURPLE
+    money_colour = ACCENT_PURPLE
 
     if exit_button.collidepoint(mouse_pos):
-        back_colour = (173, 44, 35)
+        back_colour = ACCENT_RED_HOVER
         back_but_copy = exit_button.inflate(-3, -1)
     if ship_button.collidepoint(mouse_pos):
-        ship_colour = (173, 142, 42)
+        ship_colour = ACCENT_PURPLE_HOVER
         ship_but_copy = ship_button.inflate(-7, -3)
     if laser_button.collidepoint(mouse_pos):
-        laser_colour = (173, 142, 42)
+        laser_colour = ACCENT_PURPLE_HOVER
         laser_but_copy = laser_button.inflate(-7, -3)
     if money_button.collidepoint(mouse_pos):
-        money_colour = (173, 142, 42)
+        money_colour = ACCENT_PURPLE_HOVER
         money_but_copy = money_button.inflate(-7, -3)
 
     pg.draw.rect(screen, back_colour, back_but_copy, border_radius=10)
@@ -47,7 +47,7 @@ def home_draw(screen, mouse_pos, title_font, subtitle_font, text_font):
     pg.draw.rect(screen, laser_colour, laser_but_copy, border_radius=15)
     pg.draw.rect(screen, money_colour, money_but_copy, border_radius=15)
 
-    title = title_font.render("Garage", True, WHITE)
+    title = title_font.render("GARAGE", True, ACCENT_LIGHTBLUE)
     exitText = text_font.render("Exit", True, WHITE)
     shipText = subtitle_font.render("Ship", True, WHITE)
     laserText = subtitle_font.render("Laser", True, WHITE)
@@ -75,7 +75,7 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
     category_data = upgrade_data[selected_category]
 
     #draw title
-    titleText = title_font.render(category_data["title"], True, WHITE)
+    titleText = title_font.render(category_data["title"], True, ACCENT_LIGHTBLUE)
     title_rect = titleText.get_rect(center=(SCREEN_WIDTH // 2, 50))
     screen.blit(titleText, title_rect)
 
@@ -113,10 +113,10 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
 
         # draw blocks for upgrades to go over
         card_rect = pg.Rect(x, y - 32, 520, 184)
-        pg.draw.rect(screen, fill3, card_rect, border_radius=12)
-        pg.draw.rect(screen, border3, card_rect, width=2, border_radius=12)
+        pg.draw.rect(screen, PANEL_SCIFI, card_rect, border_radius=12)
+        pg.draw.rect(screen, PANEL_SCIFI_BORDER, card_rect, width=2, border_radius=12)
 
-        nameText = subtitle_font.render(upgrade["name"], True, LIGHTBLUE)
+        nameText = subtitle_font.render(upgrade["name"], True, ACCENT_TURQUOISE)
         nameText_rect = nameText.get_rect(topleft=(x + 40, y))
         screen.blit(nameText, nameText_rect)
 
@@ -127,24 +127,24 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
         if level < len(values) - 1:
             next_value = values[level + 1]
 
-            nextText = text_font.render(f"Next: {next_value}", True, (60, 220, 100))
+            nextText = text_font.render(f"Next: {next_value}", True, ACCENT_GREEN)
             nextText_rect = nextText.get_rect(topleft=(x + 40, y + 67))
             screen.blit(nextText, nextText_rect)
 
             cost = costs[level]
 
-            costText = text_font.render(f"Cost: {cost}", True, YELLOW)
+            costText = text_font.render(f"Cost: {cost}", True, ACCENT_YELLOW)
             costText_rect = costText.get_rect(topleft=(x + 40, y + 97))
             screen.blit(costText, costText_rect)
             if player["coins"] < cost:
                 buyColour = GREY
 
         else:
-            maxText = text_font.render("MAX LEVEL", True, (230, 80, 80))
+            maxText = text_font.render("MAX LEVEL", True, ACCENT_RED)
             maxText_rect = maxText.get_rect(topleft=(x + 40, y + 65))
             screen.blit(maxText, maxText_rect)
             buyText = "MAX"
-            buyColour = GREY
+            buyColour = DISABLED
 
         buy_button = pg.Rect(0, 0, 80, 35)
         buy_button.center = (x + 440, y + 97)
