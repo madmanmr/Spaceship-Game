@@ -5,6 +5,7 @@
     game over. You get points for shooting asteroids.
 
 '''
+from idlelib.sidebar import WrappedLineHeightChangeDelegator
 
 #imports
 import pygame as pg
@@ -14,6 +15,7 @@ from Spaceship import Ship1
 from settings import *
 from asteroids import Asteroid
 from lasers import Laser
+from stars import Star
 
 from Screens import menu, level_select, garage, playing, game_over
 
@@ -46,7 +48,8 @@ lose = False
 ship = Ship1(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
 asteroids = []
-laser = []
+lasers = []
+stars = []
 buy_buttons = []
 
 # player
@@ -203,6 +206,19 @@ def create_asteroids():
 
     asteroids.append(asteroid)
 
+#makem
+def create_stars():
+    stars.clear()
+
+    for i in range(200):
+        stars.append(
+            Star(
+                np.random.randint(0, SCREEN_WIDTH),
+                np.random.randint(0, SCREEN_HEIGHT),
+                np.random.uniform(0.2, 1.0)
+            )
+        )
+
 #move ship to centre and stop
 def reset_ship():
 
@@ -233,8 +249,10 @@ def start_level(selected_level):
 
     lose = False
 
-    laser.clear()
+    lasers.clear()
     asteroids.clear()
+    stars.clear()
+    create_stars()
 
     reset_ship()
     set_level_values()
@@ -316,14 +334,14 @@ def spaceshipmainfunc():
 def lasermainfunc():
     keys = pg.key.get_pressed()
 
-    for laser_obj in laser[:]:
+    for laser_obj in lasers[:]:
         laser_obj.update()
 
         #if laser_obj.off_screen: #saves potatoes
             #laser.remove(laser_obj)
 
     if keys[pg.K_SPACE] and game["shootCooldown"] <= 0:
-        laser.append(Laser(
+        lasers.append(Laser(
             ship.x + np.cos(ship.angle) * ship.length,
             ship.y + np.sin(ship.angle) * ship.length,
             ship.angle,
@@ -351,7 +369,7 @@ def asteroidsmainfunc():
 
         destroyed = False
 
-        for laser_obj in laser[:]:
+        for laser_obj in lasers[:]:
             for point in laser_obj.points:
                 dx = point[0] - asteroid.x
                 dy = point[1] - asteroid.y
@@ -360,7 +378,7 @@ def asteroidsmainfunc():
 
                 if distance <= asteroid.radius:
                     asteroids.remove(asteroid)
-                    laser.remove(laser_obj)
+                    lasers.remove(laser_obj)
 
                     game["asteroidCount"] = len(asteroids)
                     game["asteroidsLeft"] -= 1
@@ -399,6 +417,14 @@ def healthmainfunc():
             if player["health"] <= 0:
                 state = GAME_OVER
                 lose = True
+
+#everything about stars
+def starmainfunc():
+    for star in stars:
+        star.update()
+
+        if star.x > SCREEN_WIDTH:
+            star.x = 0
 
 running = True
 while running:
@@ -464,9 +490,9 @@ while running:
         buy_buttons = garage.draw_garage(screen, garage.selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc, player)
 
     elif state == PLAYING:
-        playing.update_game(screen,backgroundColourCalc,spaceshipmainfunc,asteroidsmainfunc,lasermainfunc,healthmainfunc)
+        playing.update_game(screen,backgroundColourCalc,spaceshipmainfunc,asteroidsmainfunc,lasermainfunc,healthmainfunc, starmainfunc)
 
-        playing.draw_game(screen,ship,asteroids,laser,playingTextFunc)
+        playing.draw_game(screen,ship,asteroids,lasers,stars,playingTextFunc)
 
     elif state == GAME_OVER:
         game_over.draw_game_over(screen, mouse_pos, text_font, gameOverTextFunc)
