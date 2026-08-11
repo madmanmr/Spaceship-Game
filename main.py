@@ -423,8 +423,19 @@ def starmainfunc():
     for star in stars:
         star.update()
 
+        if ship.speed_x or ship.speed_y > 0:
+            #star.angle = np.arctan2(ship.speed_y, ship.speed_x)
+            star.x -= ship.speed_x * 0.2
+            star.y -= ship.speed_y * 0.2
+
         if star.x > SCREEN_WIDTH:
             star.x = 0
+        elif star.x < 0:
+            star.x = SCREEN_WIDTH
+        elif star.y > SCREEN_HEIGHT:
+            star.y = 0
+        elif star.y < 0:
+            star.y = SCREEN_HEIGHT
 
 running = True
 while running:
@@ -481,7 +492,7 @@ while running:
                 state = MENU
 
     if state == MENU:
-        menu.draw_menu(screen, mouse_pos, title_font, subtitle_font)
+        menu.draw_menu(screen, mouse_pos, title_font, subtitle_font, stars)
 
     elif state == LEVEL_SELECT:
         levelButtons = level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)

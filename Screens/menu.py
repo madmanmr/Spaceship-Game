@@ -21,8 +21,11 @@ def create_menu_buttons():
 
 levelSelectionBut, GarageBut = create_menu_buttons()
 
-def draw_menu(screen, mouse_pos, title_font, subtitle_font):
+def draw_menu(screen, mouse_pos, title_font, subtitle_font, stars):
     screen.fill(BACKGROUND_1)
+
+    for star_obj in stars:
+        star_obj.draw(screen)
 
     level_colour = ACCENT_PURPLE
     garage_colour = ACCENT_PURPLE
@@ -53,6 +56,7 @@ def draw_menu(screen, mouse_pos, title_font, subtitle_font):
     screen.blit(title, title_rect)
     screen.blit(levels_text, levels_rect)
     screen.blit(garage_text, garage_rect)
+
 
 def handle_menu_events(event):
     if event.type == pg.MOUSEBUTTONDOWN:
