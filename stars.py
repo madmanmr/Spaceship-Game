@@ -14,7 +14,7 @@ class Star:
 
 		self.angle = 0
 
-		self.speed =  0.3 + self.depth * 1.3
+		self.speed =  0.3 + self.depth * 1.1
 		self.max_brightness =  100 + self.depth * 155 #max 255 min 100 + 155 * 0.2
 
 		self.twinkle_timer = 0
@@ -46,5 +46,9 @@ class Star:
 
 
 	def draw(self, screen):
+		glowRect = pg.Rect(0, 0, 3, 3)
+		glowRect.center = (self.x, self.y)
+		pg.draw.rect(screen, (200, 200, 20), glowRect)
+
 		self.points = self.get_points()
 		pg.draw.polygon(screen, (255,255,255), self.points)

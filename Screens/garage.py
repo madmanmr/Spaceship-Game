@@ -98,9 +98,6 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
     x = 60
     buy_buttons = []
 
-    #buyText = "Buy"
-    #buyColour = (60, 220, 100)
-
 
     for upgrade_key, upgrade in category_data["upgrades"].items():
         buyText = "Buy"
@@ -173,8 +170,6 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
 
 
 def draw_garage(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc, player):
-
-    screen.fill((15, 15, 30))
 
     buy_buttons = []
 

@@ -14,8 +14,6 @@ def create_game_over_buttons():
 NewGameBut, MenuBut = create_game_over_buttons()
 
 def draw_game_over(screen, mouse_pos, text_font, gameOverTextFunc):
-    screen.fill((15, 15, 30))
-
     new_game_colour = (60, 220, 100)
     menu_colour = (60, 220, 100)
 

@@ -7,6 +7,7 @@
 '''
 from idlelib.sidebar import WrappedLineHeightChangeDelegator
 
+import pygame
 #imports
 import pygame as pg
 import numpy as np
@@ -51,6 +52,7 @@ asteroids = []
 lasers = []
 stars = []
 buy_buttons = []
+
 
 # player
 player = {
@@ -196,7 +198,7 @@ def set_upgrade_values():
 
 #creat number of asteroids
 def create_asteroids():
-    x = 100
+    x = 0
     y = np.random.randint(0, SCREEN_HEIGHT)
 
     asteroid = Asteroid(x, y)
@@ -211,13 +213,16 @@ def create_stars():
     stars.clear()
 
     for i in range(200):
+        x = np.random.randint(0, SCREEN_WIDTH)
+        y = np.random.randint(0, SCREEN_HEIGHT)
         stars.append(
             Star(
-                np.random.randint(0, SCREEN_WIDTH),
-                np.random.randint(0, SCREEN_HEIGHT),
+                x,
+                y,
                 np.random.uniform(0.2, 1.0)
             )
         )
+create_stars()
 
 #move ship to centre and stop
 def reset_ship():
@@ -251,8 +256,8 @@ def start_level(selected_level):
 
     lasers.clear()
     asteroids.clear()
-    stars.clear()
-    create_stars()
+    #stars.clear()
+    #create_stars()
 
     reset_ship()
     set_level_values()
@@ -437,6 +442,14 @@ def starmainfunc():
         elif star.y < 0:
             star.y = SCREEN_HEIGHT
 
+def draw_background(colour):
+    screen.fill(colour)
+
+    starmainfunc()
+
+    for star in stars:
+        star.draw(screen)
+
 running = True
 while running:
     clock.tick(60)
@@ -490,22 +503,32 @@ while running:
 
             elif action == "menu":
                 state = MENU
+    starmainfunc()
 
     if state == MENU:
+        draw_background(BACKGROUND_1)
         menu.draw_menu(screen, mouse_pos, title_font, subtitle_font, stars)
 
     elif state == LEVEL_SELECT:
+        draw_background(BACKGROUND_1)
         levelButtons = level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
 
     elif state == GARAGE:
+        draw_background(BACKGROUND_1)
         buy_buttons = garage.draw_garage(screen, garage.selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc, player)
 
     elif state == PLAYING:
-        playing.update_game(screen,backgroundColourCalc,spaceshipmainfunc,asteroidsmainfunc,lasermainfunc,healthmainfunc, starmainfunc)
+        draw_background(BACKGROUND_1)
 
-        playing.draw_game(screen,ship,asteroids,lasers,stars,playingTextFunc)
+        spaceshipmainfunc()
+        asteroidsmainfunc()
+        lasermainfunc()
+        healthmainfunc()
+
+        playing.draw_game(screen,ship,asteroids,lasers,playingTextFunc)
 
     elif state == GAME_OVER:
+        draw_background(BACKGROUND_1)
         game_over.draw_game_over(screen, mouse_pos, text_font, gameOverTextFunc)
 
     pg.display.flip()

@@ -54,7 +54,6 @@ def create_level_selection_buttons():
 BackButL = (create_level_selection_buttons())
 
 def draw_level_selection(screen, mouse_pos, title_font, text_font):
-    screen.fill((15, 15, 30))
 
     levelButtons = []
     levelButtons = make_level_select_buttons(screen, mouse_pos, title_font, text_font)
