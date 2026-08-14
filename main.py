@@ -442,6 +442,7 @@ def starmainfunc():
         elif star.y < 0:
             star.y = SCREEN_HEIGHT
 
+#draws stars and background colour
 def draw_background(colour):
     screen.fill(colour)
 
@@ -449,6 +450,8 @@ def draw_background(colour):
 
     for star in stars:
         star.draw(screen)
+
+
 
 running = True
 while running:
@@ -503,7 +506,6 @@ while running:
 
             elif action == "menu":
                 state = MENU
-    starmainfunc()
 
     if state == MENU:
         draw_background(BACKGROUND_1)

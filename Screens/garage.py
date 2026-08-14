@@ -138,7 +138,7 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
 
         else:
             maxText = text_font.render("MAX LEVEL", True, ACCENT_RED)
-            maxText_rect = maxText.get_rect(topleft=(x + 40, y + 65))
+            maxText_rect = maxText.get_rect(topleft=(x + 40, y + 70))
             screen.blit(maxText, maxText_rect)
             buyText = "MAX"
             buyColour = DISABLED

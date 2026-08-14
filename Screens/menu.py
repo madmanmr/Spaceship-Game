@@ -21,12 +21,12 @@ def create_menu_buttons():
 
 levelSelectionBut, GarageBut = create_menu_buttons()
 
+
+# draw inside of spacehip first
+def draw_interior(screen):
+   x = 1
+
 def draw_menu(screen, mouse_pos, title_font, subtitle_font, stars):
-    screen.fill(BACKGROUND_1)
-
-    for star_obj in stars:
-        star_obj.draw(screen)
-
     level_colour = ACCENT_PURPLE
     garage_colour = ACCENT_PURPLE
 
