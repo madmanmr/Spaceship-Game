@@ -24,7 +24,6 @@ levelSelectionBut, GarageBut = create_menu_buttons()
 
 # draw inside of spacehip first
 def draw_interior(screen):
-   #-----dark grey
    top_points = [
        (0, 0),
        (140, 120),
@@ -33,18 +32,6 @@ def draw_interior(screen):
        (SCREEN_WIDTH, 0)
    ]
 
-   top_highlight = [
-       (0, 0),
-       (23.5, 0),
-       (140, 100),
-       (SCREEN_WIDTH / 2, 180),
-       (SCREEN_WIDTH - 140, 100),
-       (SCREEN_WIDTH - 23.5, 0),
-       (SCREEN_WIDTH, 0),
-       (SCREEN_WIDTH - 140, 120),
-       (SCREEN_WIDTH / 2, 200),
-       (140, 120),
-   ]
    bottom_points = [
        (0, SCREEN_HEIGHT),
        (0, SCREEN_HEIGHT - 140),
@@ -53,21 +40,25 @@ def draw_interior(screen):
        (SCREEN_WIDTH, SCREEN_HEIGHT - 140),
        (SCREEN_WIDTH, SCREEN_HEIGHT),
    ]
-   pg.draw.polygon(screen, GREY, top_points)  # top medium
-   pg.draw.polygon(screen, DARK_GREY, top_highlight)#top
+   pg.draw.polygon(screen, DARK_GREY, top_points)#top
    pg.draw.polygon(screen, DARK_GREY, bottom_points)#bottom
 
    pg.draw.line(screen, DARK_GREY, (140,100), (260, SCREEN_HEIGHT - 270), width=30)#left
    pg.draw.line(screen, DARK_GREY, (SCREEN_WIDTH - 140, 100), (SCREEN_WIDTH - 260, SCREEN_HEIGHT - 270), width=30)#right
 
-   #--------middle grey
-   #top box
-   pg.draw.rect(screen, LIGHT_GREY, (140, 0, 920, 110), )#higlight drawn before dont judge
-   pg.draw.rect(screen, GREY, (160, 20, 880, 70), )
+   #top background
+   top_highlight = [
+       (23.5, 0),
+       (140, 100),
+       (SCREEN_WIDTH / 2, 180),
+       (SCREEN_WIDTH - 140, 100),
+       (SCREEN_WIDTH - 23.5, 0),
+   ]
+   pg.draw.polygon(screen, GREY, top_highlight)
 
    #highlight pillar lines
-   pg.draw.line(screen, GREY, (140, 100), (265, SCREEN_HEIGHT - 250), width=10)#left
-   pg.draw.line(screen, GREY, (SCREEN_WIDTH - 140, 100), (SCREEN_WIDTH - 265, SCREEN_HEIGHT - 250), width=10)#right
+   pg.draw.line(screen, GREY, (135, 82), (265, SCREEN_HEIGHT - 250), width=10)#left
+   pg.draw.line(screen, GREY, (SCREEN_WIDTH - 135, 82), (SCREEN_WIDTH - 265, SCREEN_HEIGHT - 250), width=10)#right
 
    #control panel background
    control_panel_background = [
@@ -77,15 +68,22 @@ def draw_interior(screen):
        (SCREEN_WIDTH - 260, SCREEN_HEIGHT - 260),
        (SCREEN_WIDTH, SCREEN_HEIGHT - 120),
        (SCREEN_WIDTH, SCREEN_HEIGHT),
-       (SCREEN_WIDTH - 60, SCREEN_HEIGHT),
+       (SCREEN_WIDTH - 70, SCREEN_HEIGHT),
        (SCREEN_WIDTH - 300, SCREEN_HEIGHT - 140),
        (300, SCREEN_HEIGHT - 140),
-       (60, SCREEN_HEIGHT),
+       (70, SCREEN_HEIGHT),
    ]
    pg.draw.polygon(screen, GREY, control_panel_background)
 
+   # ground lines
+   pg.draw.line(screen, GREY, (300, SCREEN_HEIGHT - 140), (300, SCREEN_HEIGHT - 70), width=10)  # left
+   pg.draw.line(screen, GREY, (SCREEN_WIDTH - 300, SCREEN_HEIGHT - 140), (SCREEN_WIDTH - 300, SCREEN_HEIGHT - 70), width=10)  # right
+   pg.draw.line(screen, GREY, (295, SCREEN_HEIGHT - 70), (SCREEN_WIDTH - 295, SCREEN_HEIGHT - 70), width=10)  # middle
+   pg.draw.line(screen, GREY, (300, SCREEN_HEIGHT - 70), (195, SCREEN_HEIGHT), width=10)  # left
+   pg.draw.line(screen, GREY, (SCREEN_WIDTH - 300, SCREEN_HEIGHT - 70), (SCREEN_WIDTH - 195, SCREEN_HEIGHT), width=10)  # right
 
-   #-------light grey
+   pg.draw.rect(screen, LIGHT_GREY, (146, 10, 910, 91), ) #higlight
+   pg.draw.rect(screen, DARK_GREY, (160, 20, 880, 70), )
 
 def draw_menu(screen, mouse_pos, title_font, subtitle_font, stars):
     draw_interior(screen)
