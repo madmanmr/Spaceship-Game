@@ -12,9 +12,11 @@ class Star:
 		self.current_size = self.base_size
 
 		self.angle = 0
-
 		self.speed =  0.1 + self.depth * 0.6
+
 		self.max_brightness =  130 + self.depth * 125 #max 255 min 100 + 155 * 0.2
+		self.min_brightness = 80
+		self.current_brightness = self.max_brightness
 
 		self.twinkle_timer = 0
 		self.twinkle_direction = 1
@@ -23,8 +25,20 @@ class Star:
 		self.points = []
 
 	def update(self):
+		#move
 		self.x += np.cos(self.angle) * self.speed
 		self.y += np.sin(self.angle) * self.speed
+
+		#twink
+		self.current_brightness += (self.twinkle_direction * self.twinkle_speed)
+
+		if self.current_brightness >= self.max_brightness:
+			self.current_brightness = self.max_brightness
+			self.twinkle_direction = -1
+
+		elif self.current_brightness <= self.min_brightness:
+			self.current_brightness = self.min_brightness
+			self.twinkle_direction = 1
 
 
 	def get_points(self):
@@ -53,11 +67,11 @@ class Star:
 
 
 	def draw(self, screen):
-		brightness = int(self.max_brightness)
+		brightness = int(self.current_brightness)
 
 		glowRect = pg.Rect(0, 0, 4, 4)
 		glowRect.center = (self.x, self.y)
-		pg.draw.rect(screen, (200, 200, 20), glowRect)
+		pg.draw.rect(screen, (brightness, brightness, brightness - 80), glowRect)
 
 		self.points = self.get_points()
 		pg.draw.polygon(screen, (brightness,brightness,brightness), self.points)
