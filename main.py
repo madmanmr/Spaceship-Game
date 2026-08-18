@@ -76,6 +76,7 @@ level = 1
 # upgrades pass to garage
 upgrades = {
     "healthUpgrade": 0,
+    "turnSpeedUpgrade": 0,
 
     "laserSpeedUpgrade": 0,
     "fireRateUpgrade": 0,
@@ -93,10 +94,16 @@ upgrade_data = {
         "button": "Ship",
         "upgrades": {
             "max_health": {
-                "name": "Increase Health",
+                "name": "Health",
                 "level_key": "healthUpgrade",
                 "values": [100,125,150,175,200],
                 "costs": [100,150,200,300]
+            },
+            "turn_speed": {
+                "name": "Turn Speed",
+                "level_key": "turnSpeedUpgrade",
+                "values": [2.5,3.5,5,6.5],
+                "costs": [150,200,300]
             }
         }
     },
@@ -142,6 +149,7 @@ upgrade_data = {
 
 # calculated upgrade values
 healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
+turnSpeedCalc = upgrade_data["ship"]["upgrades"]["turn_speed"]["values"][upgrades["turnSpeedUpgrade"]]
 
 laserSpeedCalc = upgrade_data["laser"]["upgrades"]["laser_speed"]["values"][upgrades["laserSpeedUpgrade"]]
 fireRateCalc = upgrade_data["laser"]["upgrades"]["fire_rate"]["values"][upgrades["fireRateUpgrade"]]
@@ -151,9 +159,9 @@ coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["val
 
 #level values
 levelDamage = [10, 20, 50, 100, 150, 200]
-asteroidSpeedMax = [10, 15, 20, 30, 45, 60]
-asteroidSpeedMin = [5, 8, 15, 20, 35, 45]
-asteroidSpawnInterval = [180, 120, 60, 30, 15, 6]
+asteroidSpeedMax = [4, 5, 7, 10, 15, 20]
+asteroidSpeedMin = [2.5, 4, 6, 8, 12, 16]
+asteroidSpawnInterval = [120, 100, 60, 30, 15, 6]
 backgroundColour = [ # used gpt to expand colours
     (15, 15, 30),   # Level 1
     (36, 29, 58),   # Level 2 (between 1 & 3)
@@ -186,9 +194,10 @@ def set_level_values():
 
 #calc vals of upgrades before level starts
 def set_upgrade_values():
-    global healthMax, laserSpeedCalc, fireRateCalc, coinRewardMultiplierCalc, laserDamageCalc
+    global healthMax, turnSpeedCalc, laserSpeedCalc, fireRateCalc, coinRewardMultiplierCalc, laserDamageCalc
 
     healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
+    turnSpeedCalc = upgrade_data["ship"]["upgrades"]["turn_speed"]["values"][upgrades["turnSpeedUpgrade"]]
 
     laserSpeedCalc = upgrade_data["laser"]["upgrades"]["laser_speed"]["values"][upgrades["laserSpeedUpgrade"]]
     fireRateCalc = upgrade_data["laser"]["upgrades"]["fire_rate"]["values"][upgrades["fireRateUpgrade"]]
@@ -232,6 +241,7 @@ def reset_ship():
 
     ship.speed_x = 0
     ship.speed_y = 0
+    ship.turn_speed = turnSpeedCalc
 
 #start x level using vals set earlier
 def start_level(selected_level):
@@ -256,8 +266,6 @@ def start_level(selected_level):
 
     lasers.clear()
     asteroids.clear()
-    #stars.clear()
-    #create_stars()
 
     reset_ship()
     set_level_values()

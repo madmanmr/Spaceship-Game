@@ -9,12 +9,13 @@ class Ship1:
         self.angle = 0
         self.speed_x = 0
         self.speed_y = 0
+        self.turn_speed = 0.5
 
     def rotate_left(self):
-        self.angle -= 0.08
+        self.angle -= np.radians(self.turn_speed)
 
     def rotate_right(self):
-        self.angle += 0.08
+        self.angle += np.radians(self.turn_speed)
 
     def bounce_x(self):
         self.speed_x *= -1

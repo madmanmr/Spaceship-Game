@@ -46,41 +46,43 @@ def draw_interior(screen):
    pg.draw.line(screen, DARK_GREY, (140,100), (260, SCREEN_HEIGHT - 270), width=30)#left
    pg.draw.line(screen, DARK_GREY, (SCREEN_WIDTH - 140, 100), (SCREEN_WIDTH - 260, SCREEN_HEIGHT - 270), width=30)#right
 
-   #top background
-   top_highlight = [
-       (23.5, 0),
-       (140, 100),
-       (SCREEN_WIDTH / 2, 180),
-       (SCREEN_WIDTH - 140, 100),
+   #grey polygon
+   grey_polygon = [
+       (23.5, 0),# top left start
+       (133.186, 94.151), #top left of left pillar
+       (257.419, 541.390), #bottom left of left pillar
+       (266.448, 536.528), #bottom right of left pillar
+       (145.453, 100.948), #top right of left pillar
+       (SCREEN_WIDTH / 2, 180), # centre of top shape
+       (1054.547, 100.948), #top left of right pillar
+       (932.588, 540), # bottom left of right pillar
+       (260, SCREEN_HEIGHT - 260), #point where left pillar meets bottom control desk
+       (0, SCREEN_HEIGHT - 120), #top left of control panel
+       (0, SCREEN_HEIGHT), # bottom left corner
+       (70, SCREEN_HEIGHT), #bottom left to the right a bit
+       (295, 663.043), # first top left intersection
+       (295, 727.34), #down that left vertical to intersection
+       (192.226, 795.840), #bottom left of bottom left line
+       (197.774, 804.160), #bottom right point of l;ine
+       (301.514, 735.000),
+       (895, 735.000),
+       (895.000, 725.00),
+       (305.000, 725.000),
+       (305.000, 660.000),
+       (895, 660),
+       (895, 735.000),
+       (1002.226, 804.160),
+       (1007.774, 795.840),
+       (905.000, 727.324),
+       (905.000, 660.000),
+       (SCREEN_WIDTH - 70, SCREEN_HEIGHT), # bottom right minus some
+       (SCREEN_WIDTH, SCREEN_HEIGHT), # bottom right corner
+       (SCREEN_WIDTH, SCREEN_HEIGHT - 120), #coming back up right side
+       (942.581, 541.390), # bottom right of right pillar intersection
+       (1066.814, 94.151), #top right of right pillar
        (SCREEN_WIDTH - 23.5, 0),
    ]
-   pg.draw.polygon(screen, GREY, top_highlight)
-
-   #highlight pillar lines
-   pg.draw.line(screen, GREY, (135, 82), (265, SCREEN_HEIGHT - 250), width=10)#left
-   pg.draw.line(screen, GREY, (SCREEN_WIDTH - 135, 82), (SCREEN_WIDTH - 265, SCREEN_HEIGHT - 250), width=10)#right
-
-   #control panel background
-   control_panel_background = [
-       (0, SCREEN_HEIGHT),
-       (0, SCREEN_HEIGHT - 120),
-       (260, SCREEN_HEIGHT - 260),
-       (SCREEN_WIDTH - 260, SCREEN_HEIGHT - 260),
-       (SCREEN_WIDTH, SCREEN_HEIGHT - 120),
-       (SCREEN_WIDTH, SCREEN_HEIGHT),
-       (SCREEN_WIDTH - 70, SCREEN_HEIGHT),
-       (SCREEN_WIDTH - 300, SCREEN_HEIGHT - 140),
-       (300, SCREEN_HEIGHT - 140),
-       (70, SCREEN_HEIGHT),
-   ]
-   pg.draw.polygon(screen, GREY, control_panel_background)
-
-   # ground lines
-   pg.draw.line(screen, GREY, (300, SCREEN_HEIGHT - 140), (300, SCREEN_HEIGHT - 70), width=10)  # left
-   pg.draw.line(screen, GREY, (SCREEN_WIDTH - 300, SCREEN_HEIGHT - 140), (SCREEN_WIDTH - 300, SCREEN_HEIGHT - 70), width=10)  # right
-   pg.draw.line(screen, GREY, (295, SCREEN_HEIGHT - 70), (SCREEN_WIDTH - 295, SCREEN_HEIGHT - 70), width=10)  # middle
-   pg.draw.line(screen, GREY, (300, SCREEN_HEIGHT - 70), (195, SCREEN_HEIGHT), width=10)  # left
-   pg.draw.line(screen, GREY, (SCREEN_WIDTH - 300, SCREEN_HEIGHT - 70), (SCREEN_WIDTH - 195, SCREEN_HEIGHT), width=10)  # right
+   pg.draw.polygon(screen, GREY, grey_polygon)
 
    pg.draw.rect(screen, LIGHT_GREY, (146, 10, 910, 91), ) #higlight
    pg.draw.rect(screen, DARK_GREY, (160, 20, 880, 70), )
