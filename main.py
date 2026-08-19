@@ -159,9 +159,10 @@ coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["val
 
 #level values
 levelDamage = [10, 20, 50, 100, 150, 200]
-asteroidSpeedMax = [4, 5, 7, 10, 15, 20]
-asteroidSpeedMin = [2.5, 4, 6, 8, 12, 16]
+asteroidSpeedMax = [6, 6.5, 7, 8, 9, 10]
+asteroidSpeedMin = [4, 4.5, 5, 6, 7, 8]
 asteroidSpawnInterval = [120, 100, 60, 30, 15, 6]
+asteroidHealth = [1, 2, 3, 4, 5, 6]
 backgroundColour = [ # used gpt to expand colours
     (15, 15, 30),   # Level 1
     (36, 29, 58),   # Level 2 (between 1 & 3)
@@ -177,18 +178,20 @@ damage = levelDamage[level - 1]
 asteroidCalcMax = asteroidSpeedMax[level - 1]
 asteroidCalcMin = asteroidSpeedMin[level - 1]
 asteroidSpawnIntervalCalc = asteroidSpawnInterval[level -1]
+asteroidHealthCalc = asteroidHealth[level - 1]
 backgroundColourCalc = backgroundColour[level - 1]
 coinLevelRewardCalc = coinLevelReward[level - 1]
 
 #funcs
 #calc all different vals for start of each level
 def set_level_values():
-    global damage, asteroidCalcMax, asteroidCalcMin, asteroidSpawnIntervalCalc, backgroundColourCalc, coinLevelRewardCalc
+    global damage, asteroidCalcMax, asteroidCalcMin, asteroidSpawnIntervalCalc, asteroidHealthCalc, backgroundColourCalc, coinLevelRewardCalc
 
     damage = levelDamage[level - 1]
     asteroidCalcMax = asteroidSpeedMax[level - 1]
     asteroidCalcMin = asteroidSpeedMin[level - 1]
     asteroidSpawnIntervalCalc = asteroidSpawnInterval[level - 1]
+    asteroidHealthCalc = asteroidHealth[level - 1]
     backgroundColourCalc = backgroundColour[level - 1]
     coinLevelRewardCalc = coinLevelReward[level - 1]
 
@@ -213,7 +216,8 @@ def create_asteroids():
     asteroid = Asteroid(x, y)
 
     asteroid.angle = np.radians(np.random.randint(-20, 21))
-    asteroid.speed = np.random.randint(asteroidCalcMin, asteroidCalcMax)
+    asteroid.health = np.random.randint(asteroidHealthCalc - 1, asteroidHealthCalc + 1)
+    asteroid.speed = np.random.randint(asteroidCalcMin, asteroidCalcMax) - asteroid.health / 2
 
     asteroids.append(asteroid)
 
@@ -383,6 +387,8 @@ def asteroidsmainfunc():
         destroyed = False
 
         for laser_obj in lasers[:]:
+            hit = False
+
             for point in laser_obj.points:
                 dx = point[0] - asteroid.x
                 dy = point[1] - asteroid.y
@@ -390,24 +396,29 @@ def asteroidsmainfunc():
                 distance = np.sqrt(dx ** 2 + dy ** 2)
 
                 if distance <= asteroid.radius:
-                    asteroids.remove(asteroid)
-                    lasers.remove(laser_obj)
-
-                    game["asteroidCount"] = len(asteroids)
-                    game["asteroidsLeft"] -= 1
-                    destroyed = True
+                    hit = True
                     break
 
-            if destroyed:
+            if hit:
+                asteroid.health -= laserDamageCalc
+
+                if asteroid.health <= 0:
+                    asteroids.remove(asteroid)
+                    destroyed = True
+                    game["asteroidsLeft"] -= 1
+
+                lasers.remove(laser_obj)
                 break
 
         if destroyed:
+            game["asteroidCount"] = len(asteroids)
             continue
 
         if asteroid.x > SCREEN_WIDTH:
             asteroid.x = 0
         elif asteroid.x < 0:
             asteroid.x = SCREEN_WIDTH
+
         if asteroid.y > SCREEN_HEIGHT or asteroid.y < 0:
             asteroid.angle = -asteroid.angle
 

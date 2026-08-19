@@ -9,11 +9,12 @@ class Asteroid:
         self.speed = 0#np.random.randint(5, 10)
         self.speed_x = 0
         self.speed_y = 0
-        self.radius = 10
+        self.health = 0
     def update(self):
         self.speed_x = self.speed * np.cos(self.angle)
         self.speed_y = self.speed * np.sin(self.angle)
         self.x += self.speed_x
         self.y += self.speed_y
+        self.radius = 20 + (self.health - 1 * 5)
     def draw(self, screen):
         pg.draw.circle(screen,(158, 73, 8),(self.x,self.y),self.radius )
