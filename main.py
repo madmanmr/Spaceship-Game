@@ -160,7 +160,7 @@ coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["val
 #level values
 levelDamage = [10, 20, 50, 100, 150, 200]
 asteroidSpeedMax = [6, 6.5, 7, 8, 9, 10]
-asteroidSpeedMin = [4, 4.5, 5, 6, 7, 8]
+asteroidSpeedMin = [4, 4.5, 5, 6, 7, 8 ]
 asteroidSpawnInterval = [120, 100, 60, 30, 15, 6]
 asteroidHealth = [1, 2, 3, 4, 5, 6]
 backgroundColour = [ # used gpt to expand colours
@@ -218,6 +218,9 @@ def create_asteroids():
     asteroid.angle = np.radians(np.random.randint(-20, 21))
     asteroid.health = np.random.randint(asteroidHealthCalc - 1, asteroidHealthCalc + 1)
     asteroid.speed = np.random.randint(asteroidCalcMin, asteroidCalcMax) - asteroid.health / 2
+    asteroid.radius = 20 + ((asteroid.health - 1) * 5)
+
+    asteroid.create_shape()
 
     asteroids.append(asteroid)
 
@@ -447,7 +450,7 @@ def starmainfunc():
     for star in stars:
         star.update()
 
-        if ship.speed_x or ship.speed_y > 0:
+        if ship.speed_x or ship.speed_y:
             #star.angle = np.arctan2(ship.speed_y, ship.speed_x)
             star.x -= ship.speed_x * 0.2
             star.y -= ship.speed_y * 0.2
