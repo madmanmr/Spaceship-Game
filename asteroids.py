@@ -1,7 +1,7 @@
 import pygame as pg
 import numpy as np
 
-from settings import BLACK, ACCENT_GREEN
+from settings import BLACK, ACCENT_GREEN, ASTEROID_CRACK
 
 
 class Asteroid:
@@ -44,29 +44,24 @@ class Asteroid:
 
         # Create ALL possible cracks
         for _ in range(6):
-            angle = np.random.uniform(0, 360)
+            side = np.random.randint(1, 3)
+            n = np.random.randint(side * 3 - 2, side * 3 + 1)
 
-            start_distance = self.radius * np.random.uniform(0.1, 0.4)
+            x1 = asteroid_points[n][0] #pick random corner of asteroid
+            y1 = asteroid_points[n][1]
 
-            x1 = np.cos(np.radians(angle)) * start_distance
-            y1 = np.sin(np.radians(angle)) * start_distance
-
-            # First part of crack
+            centre_angle = np.degrees(np.arctan2(-y1, -x1))
+            angle = centre_angle + np.random.uniform(-45, 45)
             crack_length = self.radius * np.random.uniform(0.5, 1.0)
 
             x2 = x1 + np.cos(np.radians(angle)) * crack_length
             y2 = y1 + np.sin(np.radians(angle)) * crack_length
 
-            # Second part points towards centre
-            dx = -x2
-            dy = -y2
 
-            angle2 = np.degrees(np.arctan2(dy, dx))
+            n2 = np.random.randint(side * 3 - 2, side * 3 + 1)
 
-            crack_length2 = self.radius * np.random.uniform(0.4, 0.8)
-
-            x3 = x2 + np.cos(np.radians(angle2)) * crack_length2
-            y3 = y2 + np.sin(np.radians(angle2)) * crack_length2
+            x3 = asteroid_points[n2][0]
+            y3 = asteroid_points[n2][1]
 
             crack_points.append({
                 "x1": x1,
@@ -113,16 +108,16 @@ class Asteroid:
 
             pg.draw.line(
                 screen,
-                BLACK,
+                ASTEROID_CRACK,
                 (x1, y1),
                 (x2, y2),
-                width=2
+                width=3
             )
 
             pg.draw.line(
                 screen,
-                BLACK,
+                ASTEROID_CRACK,
                 (x2, y2),
                 (x3, y3),
-                width=2
+                width=3
             )

@@ -159,8 +159,8 @@ coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["val
 
 #level values
 levelDamage = [10, 20, 50, 100, 150, 200]
-asteroidSpeedMax = [6, 6.5, 7, 8, 9, 10]
-asteroidSpeedMin = [4, 4.5, 5, 6, 7, 8 ]
+asteroidSpeedMax = [6, 6.5, 7, 8, 9, 2]
+asteroidSpeedMin = [4, 4.5, 5, 6, 7, 1]
 asteroidSpawnInterval = [120, 100, 60, 30, 15, 6]
 asteroidHealth = [1, 2, 3, 4, 5, 6]
 backgroundColour = [ # used gpt to expand colours
