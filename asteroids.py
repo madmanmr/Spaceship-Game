@@ -28,96 +28,73 @@ class Asteroid:
 
     def create_shape(self):
         asteroid_points = []
-        crack_points = []
+        num_vertices = 10
 
-        # Create asteroid shape
-        for i in range(10):
-            angle = (360 / 10) * i
-            angle += np.random.uniform(-10, 10)
-
-            distance = self.radius * np.random.uniform(0.8, 1.1)
+        for i in range(num_vertices):
+            angle = (360 / num_vertices) * i + np.random.uniform(-8, 8)
+            distance = self.radius * np.random.uniform(0.85, 1.15)
 
             x = np.cos(np.radians(angle)) * distance
             y = np.sin(np.radians(angle)) * distance
-
             asteroid_points.append((x, y))
 
-        # Create ALL possible cracks
-        for _ in range(6):
-            side = np.random.randint(1, 3)
-            n = np.random.randint(side * 3 - 2, side * 3 + 1)
-
-            x1 = asteroid_points[n][0] #pick random corner of asteroid
-            y1 = asteroid_points[n][1]
-
-            centre_angle = np.degrees(np.arctan2(-y1, -x1))
-            angle = centre_angle + np.random.uniform(-45, 45)
-            crack_length = self.radius * np.random.uniform(0.5, 1.0)
-
-            x2 = x1 + np.cos(np.radians(angle)) * crack_length
-            y2 = y1 + np.sin(np.radians(angle)) * crack_length
-
-
-            n2 = np.random.randint(side * 3 - 2, side * 3 + 1)
-
-            x3 = asteroid_points[n2][0]
-            y3 = asteroid_points[n2][1]
-
-            crack_points.append({
-                "x1": x1,
-                "y1": y1,
-                "x2": x2,
-                "y2": y2,
-                "x3": x3,
-                "y3": y3
-            })
-
         self.shape_points = asteroid_points
-        self.crack_points = crack_points
+
+        self.crack_points = []
+        max_cracks = 6
+
+        #pick random outer points for start
+        start_indices = np.random.choice(num_vertices, size=max_cracks, replace=True)
+
+        for idx in start_indices:
+            start_x, start_y = asteroid_points[idx]
+
+            #crack travels from corner towards center with magic
+            target_angle = np.degrees(np.arctan2(-start_y, -start_x))
+
+            segments = np.random.randint(3, 5)  # 3 to 4 jagged segments
+            total_length = self.radius * np.random.uniform(0.7, 1.2)
+            step_length = total_length / segments
+
+            current_x, current_y = start_x, start_y
+            main_path = [(current_x, current_y)]
+            branches = []
+
+            current_angle = target_angle
+
+            for s in range(segments):
+                # Add random variation to direction at each segment joint
+                current_angle += np.random.uniform(-35, 35)
+
+                next_x = current_x + np.cos(np.radians(current_angle)) * step_length
+                next_y = current_y + np.sin(np.radians(current_angle)) * step_length
+                main_path.append((next_x, next_y))
+
+                #30 percent for twigs
+                if s > 0 and np.random.rand() < 0.3:
+                    branch_angle = current_angle + np.random.choice([-45, 45])
+                    branch_len = step_length * np.random.uniform(0.5, 0.8)
+                    branch_end_x = next_x + np.cos(np.radians(branch_angle)) * branch_len
+                    branch_end_y = next_y + np.sin(np.radians(branch_angle)) * branch_len
+                    branches.append([(next_x, next_y), (branch_end_x, branch_end_y)])
+
+                current_x, current_y = next_x, next_y
+
+            self.crack_points.append({"path": main_path, "branches": branches})
 
     def draw(self, screen):
+        world_points = [(self.x + x, self.y + y) for x, y in self.shape_points] #ai efficiency
+        pg.draw.polygon(screen, (158, 73, 8), world_points)
 
-        # Draw asteroid
-        asteroid_points = []
+        health_ratio = max(0, self.health / getattr(self, "max_health", 10)) # holy ai
+        cracks_to_show = int((1.0 - health_ratio) * len(self.crack_points))
 
-        for x, y in self.shape_points:
-            asteroid_points.append((
-                self.x + x,
-                self.y + y
-            ))
+        for crack in self.crack_points[:cracks_to_show]:
+            main_world = [(self.x + px, self.y + py) for px, py in crack["path"]]
+            pg.draw.lines(screen, ASTEROID_CRACK, False, main_world, width=3)
 
-        pg.draw.polygon(
-            screen,
-            (158, 73, 8),
-            asteroid_points
-        )
-
-        # Decide how many cracks to show
-        crack_level = 6 - int(round(self.health / 2))
-
-        # Draw only that many cracks
-        for crack in self.crack_points[:crack_level]:
-            x1 = self.x + crack["x1"]
-            y1 = self.y + crack["y1"]
-
-            x2 = self.x + crack["x2"]
-            y2 = self.y + crack["y2"]
-
-            x3 = self.x + crack["x3"]
-            y3 = self.y + crack["y3"]
-
-            pg.draw.line(
-                screen,
-                ASTEROID_CRACK,
-                (x1, y1),
-                (x2, y2),
-                width=3
-            )
-
-            pg.draw.line(
-                screen,
-                ASTEROID_CRACK,
-                (x2, y2),
-                (x3, y3),
-                width=3
-            )
+            for branch in crack["branches"]:
+                branch_world = [
+                    (self.x + bx, self.y + by) for bx, by in branch
+                ]
+                pg.draw.lines(screen, ASTEROID_CRACK, False, branch_world, width=2)
