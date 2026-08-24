@@ -88,7 +88,7 @@ def draw_interior(screen):
    pg.draw.rect(screen, LIGHT_GREY, (146, 10, 910, 91), ) #higlight
    pg.draw.rect(screen, DARK_GREY, (160, 20, 880, 70), )
 
-def draw_menu(screen, mouse_pos, title_font, subtitle_font, stars):
+def draw_menu(screen, mouse_pos, title_font, subtitle_font):
     draw_interior(screen)
     level_colour = ACCENT_PURPLE
     garage_colour = ACCENT_PURPLE

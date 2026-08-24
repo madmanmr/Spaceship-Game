@@ -216,7 +216,12 @@ def create_asteroids():
     asteroid = Asteroid(x, y)
 
     asteroid.angle = np.radians(np.random.randint(-20, 21))
-    asteroid.health = np.random.randint(asteroidHealthCalc - 1, asteroidHealthCalc + 1)
+
+    asteroid.max_health = asteroidHealthCalc
+    asteroid.health = np.random.randint(
+        asteroidHealthCalc - 1,
+        asteroidHealthCalc + 1
+    )
     asteroid.speed = np.random.randint(asteroidCalcMin, asteroidCalcMax) - asteroid.health / 2
     asteroid.radius = 20 + ((asteroid.health - 1) * 5)
 
@@ -493,7 +498,9 @@ while running:
                 state = new_state
 
         elif state == LEVEL_SELECT:
-            new_state, selected_level = (level_select.handle_level_selection_events(event, levelButtons))
+            new_state, selected_level = level_select.handle_level_selection_events(event, levelButtons)
+            if new_state is not None:
+                state = new_state
 
             if selected_level is not None:
                 start_level(selected_level)
@@ -531,7 +538,7 @@ while running:
 
     if state == MENU:
         draw_background(BACKGROUND_1)
-        menu.draw_menu(screen, mouse_pos, title_font, subtitle_font, stars)
+        menu.draw_menu(screen, mouse_pos, title_font, subtitle_font)
 
     elif state == LEVEL_SELECT:
         draw_background(BACKGROUND_1)
