@@ -107,7 +107,7 @@ class Asteroid:
         pg.draw.polygon(screen, ASTEROID_CRACK, world_points)
         pg.draw.polygon(screen, ASTEROID, world_points_border)
 
-        damage_taken = max(0, self.max_health - self.health)
+        damage_taken = max(0, 6 - self.health)
 
         for stem in self.crack_points:
             segments_to_show = min(damage_taken, len(stem))

@@ -77,6 +77,8 @@ level = 1
 upgrades = {
     "healthUpgrade": 0,
     "turnSpeedUpgrade": 0,
+    "thrustUpgrade": 0,
+    "reverseThrustUpgrade": 0,
 
     "laserSpeedUpgrade": 0,
     "fireRateUpgrade": 0,
@@ -104,6 +106,18 @@ upgrade_data = {
                 "level_key": "turnSpeedUpgrade",
                 "values": [2.5,3.5,5,6.5],
                 "costs": [150,200,300]
+            },
+            "thrust": {
+                "name": "Thrust",
+                "level_key": "thrustUpgrade",
+                "values": [0.2,0.3,0.4,0.5,0.7],
+                "costs": [150,200,300,450]
+            },
+            "reverse_thrust": {
+                "name": "Reverse Thrust",
+                "level_key": "reverseThrustUpgrade",
+                "values": [0.1,0.2,0.3,0.4,0.5],
+                "costs": [100,150,250,350]
             }
         }
     },
@@ -150,6 +164,8 @@ upgrade_data = {
 # calculated upgrade values
 healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
 turnSpeedCalc = upgrade_data["ship"]["upgrades"]["turn_speed"]["values"][upgrades["turnSpeedUpgrade"]]
+thrustCalc = upgrade_data["ship"]["upgrades"]["thrust"]["values"][upgrades["thrustUpgrade"]]
+reverseThrustCalc = upgrade_data["ship"]["upgrades"]["reverse_thrust"]["values"][upgrades["reverseThrustUpgrade"]]
 
 laserSpeedCalc = upgrade_data["laser"]["upgrades"]["laser_speed"]["values"][upgrades["laserSpeedUpgrade"]]
 fireRateCalc = upgrade_data["laser"]["upgrades"]["fire_rate"]["values"][upgrades["fireRateUpgrade"]]
@@ -197,10 +213,15 @@ def set_level_values():
 
 #calc vals of upgrades before level starts
 def set_upgrade_values():
-    global healthMax, turnSpeedCalc, laserSpeedCalc, fireRateCalc, coinRewardMultiplierCalc, laserDamageCalc
+    global \
+        healthMax, turnSpeedCalc, thrustCalc, reverseThrustCalc, \
+        laserSpeedCalc, fireRateCalc, laserDamageCalc, \
+        coinRewardMultiplierCalc
 
     healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
     turnSpeedCalc = upgrade_data["ship"]["upgrades"]["turn_speed"]["values"][upgrades["turnSpeedUpgrade"]]
+    thrustCalc = upgrade_data["ship"]["upgrades"]["thrust"]["values"][upgrades["thrustUpgrade"]]
+    reverseThrustCalc = upgrade_data["ship"]["upgrades"]["reverse_thrust"]["values"][upgrades["reverseThrustUpgrade"]]
 
     laserSpeedCalc = upgrade_data["laser"]["upgrades"]["laser_speed"]["values"][upgrades["laserSpeedUpgrade"]]
     fireRateCalc = upgrade_data["laser"]["upgrades"]["fire_rate"]["values"][upgrades["fireRateUpgrade"]]
@@ -338,6 +359,8 @@ def spaceshipmainfunc():
         ship.rotate_right()
     if keys[pg.K_w]:
         ship.thrust()
+    if keys[pg.K_s]:
+        ship.reverse_thrust()
 
     if ship.x >= SCREEN_WIDTH:
         ship.x = SCREEN_WIDTH
@@ -457,8 +480,8 @@ def starmainfunc():
 
         if ship.speed_x or ship.speed_y:
             #star.angle = np.arctan2(ship.speed_y, ship.speed_x)
-            star.x -= ship.speed_x * 0.2
-            star.y -= ship.speed_y * 0.2
+            star.x -= ship.speed_x * 0.2#* np.cos(ship.angle) * 0.2
+            star.y -= ship.speed_y * 0.2#* np.sin(ship.angle) * 0.2
 
         if star.x > SCREEN_WIDTH:
             star.x = 0

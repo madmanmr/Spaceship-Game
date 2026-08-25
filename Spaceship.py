@@ -7,9 +7,14 @@ class Ship1:
         self.x = x
         self.y = y
         self.angle = 0
+
+        self.speed_incr = 0.2
+        self.turn_speed = 0.5
+        self.drag = 0.99
+        self.brake_incr = 0.1
+
         self.speed_x = 0
         self.speed_y = 0
-        self.turn_speed = 0.5
 
     def rotate_left(self):
         self.angle -= np.radians(self.turn_speed)
@@ -26,14 +31,18 @@ class Ship1:
         self.angle = np.arctan2(self.speed_y, self.speed_x)
 
     def thrust(self):
-        self.speed_x += np.cos(self.angle) * 0.2
-        self.speed_y += np.sin(self.angle) * 0.2
+        self.speed_x += self.speed_incr * np.cos(self.angle)
+        self.speed_y += self.speed_incr * np.sin(self.angle)
+
+    def reverse_thrust(self):
+        self.speed_x -= self.brake_incr * np.cos(self.angle)
+        self.speed_y -= self.brake_incr * np.sin(self.angle)
 
     def update(self):
         self.x += self.speed_x
         self.y += self.speed_y
-        self.speed_x *= 0.99
-        self.speed_y *= 0.99
+        self.speed_x *= self.drag
+        self.speed_y *= self.drag
 
     def draw1(self, screen):
         length = 35
