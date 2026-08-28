@@ -68,7 +68,8 @@ game = {
     "asteroidsSpawned": 0,
     "asteroidCountMax": 0,
     "asteroidSpawnTimer": 0,
-    "asteroidsLeft": 0
+    "asteroidsLeft": 0,
+    "pause": False
 }
 # level
 level = 1
@@ -501,6 +502,60 @@ def draw_background(colour):
     for star in stars:
         star.draw(screen)
 
+#pause draw func to draw everything while paused
+def draw_pause():
+    global state
+
+    draw_background(BACKGROUND_1)
+
+    ship.draw1(screen)
+
+    for asteroid in asteroids:
+        asteroid.draw(screen)
+    for laser_obj in lasers:
+        laser_obj.draw(screen)
+
+    playingTextFunc()
+
+    #rects
+    resumeRect = pg.Rect(0, 0, 220, 100)
+    exitRect = pg.Rect(0, 0, 220, 100)
+    resumeRect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    exitRect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 150)
+
+    ResumeRectColour = ACCENT_GREEN
+    if resumeRect.collidepoint(mouse_pos):
+        ResumeRectColour = ACCENT_GREEN_HOVER
+        resumeRect.inflate_ip(-7, -4)
+
+    exitRectColour = ACCENT_RED
+    if exitRect.collidepoint(mouse_pos):
+        exitRectColour = ACCENT_RED_HOVER
+        exitRect.inflate_ip(-7, -4)
+
+    pg.draw.rect(screen, ResumeRectColour, resumeRect, border_radius=15)
+    pg.draw.rect(screen, exitRectColour, exitRect, border_radius=15)
+
+    titleText = title_font.render("GAME PAUSED", True, WHITE)
+    title_rect = titleText.get_rect(center=(SCREEN_WIDTH / 2, (SCREEN_HEIGHT / 2) - 150))
+
+    resumeText = subtitle_font.render("Resume", True, WHITE)
+    resume_rect = resumeText.get_rect(center=resumeRect.center)
+
+    exitText = subtitle_font.render("Exit", True, WHITE)
+    exit_rect = exitText.get_rect(center=exitRect.center)
+
+    screen.blit(titleText, title_rect)
+    screen.blit(resumeText, resume_rect)
+    screen.blit(exitText, exit_rect)
+
+    if event.type == pg.MOUSEBUTTONDOWN:
+        if resumeRect.collidepoint(mouse_pos):
+            game["pause"] = False
+        elif exitRect.collidepoint(mouse_pos):
+            game["pause"] = False
+            state = MENU
+
 
 
 running = True
@@ -550,6 +605,11 @@ while running:
             if new_state is not None:
                 state = new_state
 
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    game["pause"] = not game["pause"]
+
+
         elif state == GAME_OVER:
             action = game_over.handle_game_over_events(event)
 
@@ -572,14 +632,16 @@ while running:
         buy_buttons = garage.draw_garage(screen, garage.selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc, player)
 
     elif state == PLAYING:
-        draw_background(BACKGROUND_1)
-
-        spaceshipmainfunc()
-        asteroidsmainfunc()
-        lasermainfunc()
-        healthmainfunc()
-
-        playing.draw_game(screen,ship,asteroids,lasers,playingTextFunc)
+        if game["pause"] == False:
+            draw_background(BACKGROUND_1)
+            spaceshipmainfunc()
+            asteroidsmainfunc()
+            lasermainfunc()
+            healthmainfunc()
+            playing.draw_game(screen, ship, asteroids, lasers, playingTextFunc, mouse_pos, text_font)
+        else:
+            playing.draw_game(screen, ship, asteroids, lasers, playingTextFunc, mouse_pos, text_font)
+            draw_pause()
 
     elif state == GAME_OVER:
         draw_background(BACKGROUND_1)
