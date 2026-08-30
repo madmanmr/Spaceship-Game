@@ -10,7 +10,7 @@ class Ship1:
 
         self.speed_incr = 0.2
         self.turn_speed = 0.5
-        self.drag = 0.99
+        self.drag = 0.9999
         self.brake_incr = 0.1
 
         self.speed_x = 0

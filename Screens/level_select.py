@@ -1,33 +1,36 @@
 import pygame as pg
-
 from settings import *
 
+
 def make_level_select_buttons(screen, mouse_pos, title_font, text_font):
-    levelAmount = range(1, 7)
+    level_amount = range(1, 7)
 
     x = 200
     y = 300
 
-    levelButtons = []
+    level_buttons = []
 
+    for level_num in level_amount:
+        button_text = str(level_num)
 
-    for levelNum in levelAmount:
-        buttonText = str(levelNum)
+        level_but = pg.Rect(0, 0, 150, 50)
+        level_but.center = (x, y)
 
-        levelBut = pg.Rect(0, 0, 150, 50)
-        levelBut.center = (x,y)
+        level_but_copy = level_but.copy()
 
-        levelBut_copy = levelBut.copy()
+        colour = ACCENT_PURPLE
 
-        colour = ACCENT_TURQUOISE
-        if levelBut.collidepoint(mouse_pos):
-            colour = ACCENT_TURQUOISE_HOVER
-            levelBut_copy = levelBut.inflate(-7, -3)
+        if level_but.collidepoint(mouse_pos):
+            colour = ACCENT_PURPLE_HOVER
+            level_but_copy = level_but.inflate(-7, -3)
 
-        pg.draw.rect(screen, colour, levelBut_copy, border_radius=15)
+        pg.draw.rect(screen, colour, level_but_copy, border_radius=15)
 
-        levelText = text_font.render(buttonText, True, BLACK)
-        screen.blit(levelText,levelText.get_rect(center=levelBut.center))
+        level_text = text_font.render(button_text, True, BLACK)
+        screen.blit(level_text, level_text.get_rect(center=level_but.center))
+
+        button_data = {"rect": level_but, "level": level_num}
+        level_buttons.append(button_data)
 
         if x < 1000:
             x += 400
@@ -35,28 +38,20 @@ def make_level_select_buttons(screen, mouse_pos, title_font, text_font):
             x = 200
             y = 500
 
-        buttonData = {
-            "rect": levelBut,
-            "level": levelNum
-        }
+    return level_buttons
 
-        levelButtons.append(buttonData)
-
-    return levelButtons
 
 def create_level_selection_buttons():
-    BackButL = pg.Rect(0, 0, 150, 50)
+    back_but_l = pg.Rect(0, 0, 150, 50)
+    back_but_l.center = (100, SCREEN_HEIGHT - 75)
+    return back_but_l
 
-    BackButL.center = (100, SCREEN_HEIGHT - 75)
 
-    return BackButL
+BackButL = create_level_selection_buttons()
 
-BackButL = (create_level_selection_buttons())
 
 def draw_level_selection(screen, mouse_pos, title_font, text_font):
-
-    levelbuttons = []
-    levelbuttons = make_level_select_buttons(screen, mouse_pos, title_font, text_font)
+    level_buttons = make_level_select_buttons(screen, mouse_pos, title_font, text_font)
 
     back_colour = ACCENT_RED
     back_copy_but = BackButL.copy()
@@ -70,19 +65,20 @@ def draw_level_selection(screen, mouse_pos, title_font, text_font):
     title_text = title_font.render("Select Level", True, ACCENT_LIGHTBLUE)
     back_text = text_font.render("Back", True, WHITE)
 
-    screen.blit(title_text,title_text.get_rect(center=(SCREEN_WIDTH // 2, 150)))
-    screen.blit(back_text,back_text.get_rect(center=BackButL.center))
+    screen.blit(title_text, title_text.get_rect(center=(SCREEN_WIDTH // 2, 150)))
+    screen.blit(back_text, back_text.get_rect(center=BackButL.center))
 
-    return levelbuttons
+    return level_buttons
 
-def handle_level_selection_events(event, levelbuttons):
+
+def handle_level_selection_events(event, level_buttons):
     if event.type == pg.MOUSEBUTTONDOWN:
+
         if BackButL.collidepoint(event.pos):
             return "menu", None
-        else:
-            for button in levelbuttons:
-                if button["rect"].collidepoint(event.pos):
-                    level = button["level"]
-                    return "playing", level
+
+        for button in level_buttons:
+            if button["rect"].collidepoint(event.pos):
+                return "playing", button["level"]
 
     return None, None

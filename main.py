@@ -52,6 +52,7 @@ asteroids = []
 lasers = []
 stars = []
 buy_buttons = []
+levelButtons = []
 
 
 # player
@@ -575,15 +576,15 @@ while running:
             if new_state is not None:
                 state = new_state
 
+
         elif state == LEVEL_SELECT:
+
             new_state, selected_level = level_select.handle_level_selection_events(event, levelButtons)
-            if new_state is not None:
-                state = new_state
 
             if selected_level is not None:
                 start_level(selected_level)
 
-            elif new_state is not None:
+            if new_state is not None:
                 state = new_state
 
 
@@ -625,7 +626,7 @@ while running:
 
     elif state == LEVEL_SELECT:
         draw_background(BACKGROUND_1)
-        levelButtons = level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
+        levelButtons = level_select.draw_level_selection(screen, mouse_pos, title_font, subtitle_font)
 
     elif state == GARAGE:
         draw_background(BACKGROUND_1)
