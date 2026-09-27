@@ -177,9 +177,9 @@ coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["val
 
 #level values
 levelDamage = [10, 20, 50, 100, 150, 200]
-asteroidSpeedMax = [6, 6.5, 7, 8, 9, 5]
-asteroidSpeedMin = [4, 4.5, 5, 6, 7, 4]
-asteroidSpawnInterval = [120, 100, 60, 30, 15, 6]
+asteroidSpeedMax = [6, 6.5, 7, 8, 9, 10]
+asteroidSpeedMin = [4, 4.5, 5, 6, 7, 8]
+asteroidSpawnInterval = [100, 100, 60, 30, 15, 6]
 asteroidHealth = [1, 2, 3, 4, 5, 6]
 backgroundColour = [ # used gpt to expand colours
     (15, 15, 30),   # Level 1
@@ -507,7 +507,7 @@ def draw_background(colour):
 def draw_pause():
     global state
 
-    draw_background(BACKGROUND_1)
+    draw_background(backgroundColourCalc)
 
     ship.draw1(screen)
 
@@ -621,20 +621,20 @@ while running:
                 state = MENU
 
     if state == MENU:
-        draw_background(BACKGROUND_1)
+        draw_background(backgroundColourCalc)
         menu.draw_menu(screen, mouse_pos, title_font, subtitle_font)
 
     elif state == LEVEL_SELECT:
-        draw_background(BACKGROUND_1)
-        levelButtons = level_select.draw_level_selection(screen, mouse_pos, title_font, subtitle_font)
+        draw_background(backgroundColourCalc)
+        levelButtons = level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
 
     elif state == GARAGE:
-        draw_background(BACKGROUND_1)
+        draw_background(backgroundColourCalc)
         buy_buttons = garage.draw_garage(screen, garage.selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc, player)
 
     elif state == PLAYING:
         if game["pause"] == False:
-            draw_background(BACKGROUND_1)
+            draw_background(backgroundColourCalc)
             spaceshipmainfunc()
             asteroidsmainfunc()
             lasermainfunc()
@@ -645,7 +645,7 @@ while running:
             draw_pause()
 
     elif state == GAME_OVER:
-        draw_background(BACKGROUND_1)
+        draw_background(backgroundColourCalc)
         game_over.draw_game_over(screen, mouse_pos, text_font, gameOverTextFunc)
 
     pg.display.flip()

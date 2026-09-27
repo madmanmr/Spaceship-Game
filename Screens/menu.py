@@ -8,12 +8,12 @@ def create_menu_buttons():
     garage_button = pg.Rect(0, 0, 220, 70)
 
     level_selection_button.center = (
-        (SCREEN_WIDTH // 2) - 200,
+        (SCREEN_WIDTH // 2) - 180,
         600
     )
 
     garage_button.center = (
-        (SCREEN_WIDTH // 2) + 200,
+        (SCREEN_WIDTH // 2) + 180,
         600
     )
 
@@ -61,7 +61,7 @@ def draw_interior(screen):
        (0, SCREEN_HEIGHT - 120), #top left of control panel
        (0, SCREEN_HEIGHT), # bottom left corner
        (70, SCREEN_HEIGHT), #bottom left to the right a bit
-       (295, 663.043), # first top left intersection
+       (295, 660), # first top left intersection
        (295, 727.34), #down that left vertical to intersection
        (185.985, 800.000), #bottom left of bottom left line
        (203.039, 800.000), #bottom right point of l;ine
@@ -88,6 +88,63 @@ def draw_interior(screen):
    pg.draw.rect(screen, LIGHT_GREY, (146, 10, 910, 91), ) #higlight
    pg.draw.rect(screen, DARK_GREY, (160, 20, 880, 70), )
 
+   #button backs
+   pg.draw.rect(screen, DARK_GREY, ((SCREEN_WIDTH // 2) + 60, 555, 240, 90))
+   pg.draw.rect(screen, DARK_GREY, ((SCREEN_WIDTH // 2) - 300, 555, 240, 90))
+
+   #draw light around control top
+   light_grey_top = [
+       (0, SCREEN_HEIGHT - 115),
+       (260, SCREEN_HEIGHT - 255),
+       (940, SCREEN_HEIGHT - 255),
+       (1200, SCREEN_HEIGHT - 115),
+       (1200, SCREEN_HEIGHT - 106),
+       (1195, SCREEN_HEIGHT - 106),
+       (937, SCREEN_HEIGHT - 245),
+       (263, SCREEN_HEIGHT - 245),
+       (5, SCREEN_HEIGHT - 106),
+       (0, SCREEN_HEIGHT - 106),
+   ]
+   light_grey_bottom = [
+       (70, SCREEN_HEIGHT),
+       (295, 660),
+       (905, 660),
+       (SCREEN_WIDTH - 70, SCREEN_HEIGHT),
+       (1148.929, SCREEN_HEIGHT),
+       (910.283, 650),
+       (289.717, 650),
+       (51.071, SCREEN_HEIGHT),
+   ]
+   middle_line = [
+       (595, 555),
+       (595, 649),
+       (605, 649),
+       (605, 555)
+   ]
+
+
+   pg.draw.polygon(screen, LIGHT_GREY, light_grey_top)
+   pg.draw.polygon(screen, LIGHT_GREY, light_grey_bottom)
+   pg.draw.polygon(screen, LIGHT_GREY, middle_line)
+
+
+   #dark lines
+   left_dark = [
+       (263, SCREEN_HEIGHT - 244),
+       (270, SCREEN_HEIGHT - 244),
+       (296.717, 649),
+       (289.717, 649),
+   ]
+   right_dark = [
+       (937, SCREEN_HEIGHT - 244),
+       (930, SCREEN_HEIGHT - 244),
+       (903.283, 649),
+       (910.283, 649),
+   ]
+   pg.draw.polygon(screen, DARK_GREY, left_dark)
+   pg.draw.polygon(screen, DARK_GREY, right_dark)
+
+
 def draw_menu(screen, mouse_pos, title_font, subtitle_font):
     draw_interior(screen)
     level_colour = ACCENT_PURPLE
@@ -105,8 +162,8 @@ def draw_menu(screen, mouse_pos, title_font, subtitle_font):
         garage_colour = ACCENT_PURPLE_HOVER
         garage_copy_rect = GarageBut.inflate(-7, -3)
 
-    pg.draw.rect(screen,level_colour,level_copy_rect,border_radius=15)
-    pg.draw.rect(screen,garage_colour,garage_copy_rect,border_radius=15)
+    pg.draw.rect(screen,level_colour,level_copy_rect)
+    pg.draw.rect(screen,garage_colour,garage_copy_rect)
 
     title = title_font.render("SPACESHIP GAME",True,ACCENT_LIGHTBLUE)
     levels_text = subtitle_font.render("Levels",True,WHITE)
