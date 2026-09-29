@@ -144,6 +144,57 @@ def draw_interior(screen):
    pg.draw.polygon(screen, DARK_GREY, left_dark)
    pg.draw.polygon(screen, DARK_GREY, right_dark)
 
+   #draw seats + middle part
+   left_back = [
+       ((SCREEN_WIDTH // 2) - 240, SCREEN_HEIGHT),
+       ((SCREEN_WIDTH // 2) - 240, SCREEN_HEIGHT - 130),
+       ((SCREEN_WIDTH // 2) - 80, SCREEN_HEIGHT - 130),
+       ((SCREEN_WIDTH // 2) - 80, SCREEN_HEIGHT)
+   ]
+   right_back = [
+       ((SCREEN_WIDTH // 2) + 240, SCREEN_HEIGHT),
+       ((SCREEN_WIDTH // 2) + 240, SCREEN_HEIGHT - 130),
+       ((SCREEN_WIDTH // 2) + 80, SCREEN_HEIGHT - 130),
+       ((SCREEN_WIDTH // 2) + 80, SCREEN_HEIGHT)
+   ]
+   left = [
+       ((SCREEN_WIDTH // 2) - 230, SCREEN_HEIGHT),
+       ((SCREEN_WIDTH // 2) - 230, SCREEN_HEIGHT - 120),
+       ((SCREEN_WIDTH // 2) - 90, SCREEN_HEIGHT - 120),
+       ((SCREEN_WIDTH // 2) - 90, SCREEN_HEIGHT)
+   ]
+   right = [
+       ((SCREEN_WIDTH // 2) + 230, SCREEN_HEIGHT),
+       ((SCREEN_WIDTH // 2) + 230, SCREEN_HEIGHT - 120),
+       ((SCREEN_WIDTH // 2) + 90, SCREEN_HEIGHT - 120),
+       ((SCREEN_WIDTH // 2) + 90, SCREEN_HEIGHT)
+   ]
+   pg.draw.polygon(screen, GREY, left_back)
+   pg.draw.polygon(screen, GREY, right_back)
+   pg.draw.polygon(screen, LIGHT_GREY, left)
+   pg.draw.polygon(screen, LIGHT_GREY, right)
+   #middle
+   middle_box_dark = [
+       ((SCREEN_WIDTH // 2) + 65, SCREEN_HEIGHT),
+       ((SCREEN_WIDTH // 2) + 65, SCREEN_HEIGHT - 100),
+       ((SCREEN_WIDTH // 2) - 65, SCREEN_HEIGHT - 100),
+       ((SCREEN_WIDTH // 2) - 65, SCREEN_HEIGHT)
+   ]
+   middle_box_light = [
+       ((SCREEN_WIDTH // 2) + 55, SCREEN_HEIGHT),
+       ((SCREEN_WIDTH // 2) + 55, SCREEN_HEIGHT - 100),
+       ((SCREEN_WIDTH // 2) - 55, SCREEN_HEIGHT - 100),
+       ((SCREEN_WIDTH // 2) - 55, SCREEN_HEIGHT)
+   ]
+   pg.draw.polygon(screen, LIGHT_GREY, middle_box_dark)
+   pg.draw.polygon(screen, GREY, middle_box_light)
+
+
+   #chair highlights
+   pg.draw.line(screen, ACCENT_LIGHTBLUE,  ((SCREEN_WIDTH // 2) + 160, SCREEN_HEIGHT),
+                ((SCREEN_WIDTH // 2) + 160, SCREEN_HEIGHT - 120), width=8)
+   pg.draw.line(screen, ACCENT_LIGHTBLUE, ((SCREEN_WIDTH // 2) - 160, SCREEN_HEIGHT),
+                ((SCREEN_WIDTH // 2) - 160, SCREEN_HEIGHT - 120), width=8)
 
 def draw_menu(screen, mouse_pos, title_font, subtitle_font):
     draw_interior(screen)

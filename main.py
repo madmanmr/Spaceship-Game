@@ -17,7 +17,6 @@ from settings import *
 from asteroids import Asteroid
 from lasers import Laser
 from stars import Star
-
 from Screens import menu, level_select, garage, playing, game_over
 
 #basics
@@ -52,7 +51,7 @@ asteroids = []
 lasers = []
 stars = []
 buy_buttons = []
-levelButtons = []
+level_buttons = []
 
 
 # player
@@ -560,6 +559,7 @@ def draw_pause():
 
 
 running = True
+selected_level = None
 while running:
     clock.tick(60)
 
@@ -576,16 +576,19 @@ while running:
             if new_state is not None:
                 state = new_state
 
-
         elif state == LEVEL_SELECT:
 
-            new_state, selected_level = level_select.handle_level_selection_events(event, levelButtons)
-
-            if selected_level is not None:
-                start_level(selected_level)
+            new_state, new_level = level_select.handle_level_selection_events(event, level_buttons, selected_level)
 
             if new_state is not None:
                 state = new_state
+
+            if new_level is not None:
+                selected_level = new_level
+
+            if new_state == PLAYING:
+
+                start_level(selected_level)
 
 
         elif state == GARAGE:
@@ -626,7 +629,7 @@ while running:
 
     elif state == LEVEL_SELECT:
         draw_background(backgroundColourCalc)
-        levelButtons = level_select.draw_level_selection(screen, mouse_pos, title_font, text_font)
+        level_buttons = level_select.draw_level_selection(screen, mouse_pos, title_font, text_font, selected_level)
 
     elif state == GARAGE:
         draw_background(backgroundColourCalc)

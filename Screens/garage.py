@@ -42,10 +42,10 @@ def home_draw(screen, mouse_pos, title_font, subtitle_font, text_font):
         money_colour = ACCENT_PURPLE_HOVER
         money_but_copy = money_button.inflate(-7, -3)
 
-    pg.draw.rect(screen, back_colour, back_but_copy, border_radius=10)
-    pg.draw.rect(screen, ship_colour, ship_but_copy, border_radius=15)
-    pg.draw.rect(screen, laser_colour, laser_but_copy, border_radius=15)
-    pg.draw.rect(screen, money_colour, money_but_copy, border_radius=15)
+    pg.draw.rect(screen, back_colour, back_but_copy, )
+    pg.draw.rect(screen, ship_colour, ship_but_copy, )
+    pg.draw.rect(screen, laser_colour, laser_but_copy, )
+    pg.draw.rect(screen, money_colour, money_but_copy, )
 
     title = title_font.render("GARAGE", True, ACCENT_LIGHTBLUE)
     exitText = text_font.render("Exit", True, WHITE)
