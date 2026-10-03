@@ -629,7 +629,7 @@ while running:
 
     elif state == LEVEL_SELECT:
         draw_background(backgroundColourCalc)
-        level_buttons = level_select.draw_level_selection(screen, mouse_pos, title_font, text_font, selected_level)
+        level_buttons = level_select.draw_level_selection(screen, mouse_pos, title_font, text_font, selected_level, subtitle_font)
 
     elif state == GARAGE:
         draw_background(backgroundColourCalc)

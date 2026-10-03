@@ -1,4 +1,5 @@
 import pygame as pg
+
 from settings import *
 
 
@@ -218,9 +219,9 @@ def draw_interior(screen):
                 ((SCREEN_WIDTH // 2) - 160, SCREEN_HEIGHT - 120), width=8)
 
 def create_level_selection_buttons():
-    back_but_l = pg.Rect(0, 0, 200, 70)
+    back_but_l = pg.Rect(0, 0, 220, 70)
     back_but_l.center = ((SCREEN_WIDTH // 2) - 180, 600)
-    play_level = pg.Rect(0, 0, 200, 70)
+    play_level = pg.Rect(0, 0, 220, 70)
     play_level.center = ((SCREEN_WIDTH // 2) + 180, 600)
     return back_but_l, play_level
 
@@ -228,7 +229,7 @@ def create_level_selection_buttons():
 BackButL, play_level = create_level_selection_buttons()
 
 
-def draw_level_selection(screen, mouse_pos, title_font, text_font, selected_level):
+def draw_level_selection(screen, mouse_pos, title_font, text_font, selected_level, subtitle_font):
     draw_interior(screen)
     level_buttons = make_level_select_buttons(screen, mouse_pos, title_font, text_font)
 
@@ -248,8 +249,8 @@ def draw_level_selection(screen, mouse_pos, title_font, text_font, selected_leve
     pg.draw.rect(screen, play_level_colour, play_level_copy, )
 
     title_text = title_font.render("LEVEL SELECTION", True, ACCENT_LIGHTBLUE)
-    back_text = text_font.render("Back", True, WHITE)
-    play_text = text_font.render(f"Play {selected_level}" if selected_level is not None else "Play", True, WHITE)
+    back_text = subtitle_font.render("BACK", True, WHITE)
+    play_text = subtitle_font.render(f"PLAY {selected_level}" if selected_level is not None else "Play", True, WHITE)
 
     screen.blit(title_text, title_text.get_rect(center=(SCREEN_WIDTH // 2, 60)))
     screen.blit(back_text, back_text.get_rect(center=BackButL.center))
