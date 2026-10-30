@@ -76,7 +76,6 @@ level = 1
 
 # upgrades pass to garage
 upgrades = {
-    "healthUpgrade": 0,
     "turnSpeedUpgrade": 0,
     "thrustUpgrade": 0,
     "reverseThrustUpgrade": 0,
@@ -85,7 +84,9 @@ upgrades = {
     "fireRateUpgrade": 0,
     "laserDamageUpgrade": 0,
 
-    "coinUpgrade": 0
+    "coinUpgrade": 0,
+
+    "healthUpgrade": 0
 }
 
 #upgrade lists
@@ -96,12 +97,6 @@ upgrade_data = {
         "title": "Ship Upgrades",
         "button": "Ship",
         "upgrades": {
-            "max_health": {
-                "name": "Health",
-                "level_key": "healthUpgrade",
-                "values": [100,125,150,175,200],
-                "costs": [100,150,200,300]
-            },
             "turn_speed": {
                 "name": "Turn Speed",
                 "level_key": "turnSpeedUpgrade",
@@ -159,11 +154,28 @@ upgrade_data = {
                 "costs": [100,150,250,400]
             }
         }
+    },
+    "health": {
+        "title": "Health Upgrades",
+        "button": "Health",
+        "upgrades": {
+            "max_health": {
+                "name": "Health",
+                "level_key": "healthUpgrade",
+                "values": [100, 125, 150, 175, 200],
+                "costs": [100, 150, 200, 300]
+            },
+            "health_regeneration": {
+                "name": "Health Regeneration",
+                "level_key": "healthRegenerationUpgrade",
+                "values": [60, 120, 180, 300, 480],
+                "costs": [100, 250, 400, 600]
+            }
+        }
     }
 }
 
 # calculated upgrade values
-healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
 turnSpeedCalc = upgrade_data["ship"]["upgrades"]["turn_speed"]["values"][upgrades["turnSpeedUpgrade"]]
 thrustCalc = upgrade_data["ship"]["upgrades"]["thrust"]["values"][upgrades["thrustUpgrade"]]
 reverseThrustCalc = upgrade_data["ship"]["upgrades"]["reverse_thrust"]["values"][upgrades["reverseThrustUpgrade"]]
@@ -173,6 +185,8 @@ fireRateCalc = upgrade_data["laser"]["upgrades"]["fire_rate"]["values"][upgrades
 laserDamageCalc = upgrade_data["laser"]["upgrades"]["laser_damage"]["values"][upgrades["laserDamageUpgrade"]]
 
 coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["values"][upgrades["coinUpgrade"]]
+
+healthMax = upgrade_data["health"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
 
 #level values
 levelDamage = [10, 20, 50, 100, 150, 200]
@@ -219,7 +233,6 @@ def set_upgrade_values():
         laserSpeedCalc, fireRateCalc, laserDamageCalc, \
         coinRewardMultiplierCalc
 
-    healthMax = upgrade_data["ship"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
     turnSpeedCalc = upgrade_data["ship"]["upgrades"]["turn_speed"]["values"][upgrades["turnSpeedUpgrade"]]
     thrustCalc = upgrade_data["ship"]["upgrades"]["thrust"]["values"][upgrades["thrustUpgrade"]]
     reverseThrustCalc = upgrade_data["ship"]["upgrades"]["reverse_thrust"]["values"][upgrades["reverseThrustUpgrade"]]
@@ -229,6 +242,8 @@ def set_upgrade_values():
     laserDamageCalc = upgrade_data["laser"]["upgrades"]["laser_damage"]["values"][upgrades["laserDamageUpgrade"]]
 
     coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["values"][upgrades["coinUpgrade"]]
+
+    healthMax = upgrade_data["health"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
 
 #creat number of asteroids
 def create_asteroids():
