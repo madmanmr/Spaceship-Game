@@ -86,7 +86,8 @@ upgrades = {
 
     "coinUpgrade": 0,
 
-    "healthUpgrade": 0
+    "healthUpgrade": 0,
+    "healthRegenerationUpgrade": 0
 }
 
 #upgrade lists

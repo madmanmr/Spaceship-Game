@@ -5,13 +5,13 @@ from settings import *
 selected_category = "home"
 
 def home_buttons():
-    exit_button = pg.Rect(0, 0, 150, 50)
+    exit_button = pg.Rect(0, 0, 70, 50)
     ship_button = pg.Rect(0, 0, 220, 70)
     laser_button = pg.Rect(0, 0, 220, 70)
     money_button = pg.Rect(0, 0, 220, 70)
     health_button = pg.Rect(0, 0, 220, 70)
 
-    exit_button.center = (100, SCREEN_HEIGHT - 75)
+    exit_button.center = ((600, 442.5))
     ship_button.center = (423.5, 327.25)
     laser_button.center = (776.5, 327.25)
     money_button.center = (423.5, 557.75)
@@ -20,127 +20,214 @@ def home_buttons():
 exit_button, ship_button, laser_button, money_button, health_button = home_buttons()
 
 def draw_home_interior(screen):
-    #CEILING###########################################################
+    # CEILING ###########################################################
+
     top_LighterPoints = [
         (0, 0),
-        (240, 205.7143),
-        (SCREEN_WIDTH - 240, 205.7143),
+        (300.366, 220),
+        (SCREEN_WIDTH - 300.366, 220),
         (SCREEN_WIDTH, 0)
     ]
-    pg.draw.polygon(screen, GREY, top_LighterPoints) # top light
+    pg.draw.polygon(screen, GREY, top_LighterPoints)
 
     topDarkLine = [
         (80, 106),
         (SCREEN_WIDTH - 80, 106),
         (SCREEN_WIDTH - 83, 114),
-        (83, 114),
+        (83, 114)
     ]
     pg.draw.polygon(screen, DARK_GREY, topDarkLine)
 
     topLeftHighlight = [
         (0, 0),
         (15.366, 0),
-        (255.366, 205.7143),
-        (240, 205.7143),
+        (300.366, 220),
+        (285, 220)
     ]
     topRightHighlight = [
         (SCREEN_WIDTH, 0),
         (SCREEN_WIDTH - 15.366, 0),
-        (SCREEN_WIDTH - 255.366, 205.7143),
-        (SCREEN_WIDTH - 240, 205.7143),
+        (SCREEN_WIDTH - 300.366, 220),
+        (SCREEN_WIDTH - 285, 220)
     ]
     pg.draw.polygon(screen, LIGHT_GREY, topLeftHighlight)
     pg.draw.polygon(screen, LIGHT_GREY, topRightHighlight)
 
+    # WINDOWS ##############################################################
 
+    greyWindowPointsL = [
+        (0, 0),
+        (0, 40),
+        (250, 265),
+        (180, 540),
+        (0, 635),
+        (0, 800),
+        (285, 665),
+        (285, 220)
+    ]
 
-    #VAULT###############################################################
+    greyWindowPointsR = [
+        (SCREEN_WIDTH, 0),
+        (SCREEN_WIDTH, 40),
+        (SCREEN_WIDTH - 250, 265),
+        (SCREEN_WIDTH - 180, 540),
+        (SCREEN_WIDTH, 635),
+        (SCREEN_WIDTH, 800),
+        (SCREEN_WIDTH - 285, 665),
+        (SCREEN_WIDTH - 285, 220)
+    ]
+
+    pg.draw.polygon(screen, GREY, greyWindowPointsL)
+    pg.draw.polygon(screen, GREY, greyWindowPointsR)
+
+    # DARK WINDOW FRAMES
+
+    darkWindowFrameL = [
+        (0, 50),
+        (241, 236.0351),
+        (180, 540),
+        (0, 635),
+        (0, 600),
+        (145, 520),
+        (218, 268),
+        (0, 79)
+    ]
+
+    darkWindowFrameR = [
+        (SCREEN_WIDTH, 40),
+        (SCREEN_WIDTH - 250, 265),
+        (SCREEN_WIDTH - 180, 540),
+        (SCREEN_WIDTH, 635),
+        (SCREEN_WIDTH, 600),
+        (SCREEN_WIDTH - 145, 520),
+        (SCREEN_WIDTH - 218, 268),
+        (SCREEN_WIDTH, 79)
+    ]
+
+    pg.draw.polygon(screen, DARK_GREY, darkWindowFrameL)
+    pg.draw.polygon(screen, DARK_GREY, darkWindowFrameR)
+
+    # LIGHT GREY HIGHLIGHTS ON THE GREY WALL
+
+    highlightL = [
+        (0, 79),
+        (218, 268),
+        (145, 520),
+        (0, 600),
+        (0, 613),
+        (157, 527),
+        (230, 264),
+        (0, 65)
+    ]
+
+    highlightR = [
+        (SCREEN_WIDTH, 79),
+        (SCREEN_WIDTH - 218, 268),
+        (SCREEN_WIDTH - 145, 520),
+        (SCREEN_WIDTH, 600),
+        (SCREEN_WIDTH, 613),
+        (SCREEN_WIDTH - 157, 527),
+        (SCREEN_WIDTH - 230, 264),
+        (SCREEN_WIDTH, 65)
+    ]
+
+    pg.draw.polygon(screen, LIGHT_GREY, highlightL)
+    pg.draw.polygon(screen, LIGHT_GREY, highlightR)
+
+    # VAULT ###############################################################
+
     darkLockerBack = [
-        (240, 205.7143),
-        (SCREEN_WIDTH - 240, 205.7143),
-        (SCREEN_WIDTH - 240, SCREEN_HEIGHT - 120),
-        (240, SCREEN_HEIGHT - 120)
+        (285, 220),
+        (SCREEN_WIDTH - 285, 220),
+        (SCREEN_WIDTH - 285, 665),
+        (285, 665)
     ]
+
     greyBack = [
-        (255, 220),
-        (SCREEN_WIDTH - 255, 220),
-        (SCREEN_WIDTH - 255, 665),
-        (255, 665)
+        (300, 235),
+        (SCREEN_WIDTH - 300, 235),
+        (SCREEN_WIDTH - 300, 650),
+        (300, 650)
     ]
+
     pg.draw.polygon(screen, DARK_GREY, darkLockerBack)
     pg.draw.polygon(screen, GREY, greyBack)
 
     vaultTopLeft = [
-        (341.25, 220),
-        (505.75, 220),
-        (592, 306.25),
-        (592, 348.25),
-        (505.75, 434.5),
-        (341.25, 434.5),
-        (255, 348.25),
-        (255, 306.25)
+        (367.5, 235),
+        (532.5, 235),
+        (600, 302.5),
+        (600, 375),
+        (532.5, 442.5),
+        (367.5, 442.5),
+        (300, 375),
+        (300, 302.5)
     ]
+
     vaultTopRight = [
-        (694.25, 220),
-        (858.75, 220),
-        (945, 306.25),
-        (945, 348.25),
-        (858.75, 434.5),
-        (694.25, 434.5),
-        (608, 348.25),
-        (608, 306.25)
+        (667.5, 235),
+        (832.5, 235),
+        (900, 302.5),
+        (900, 375),
+        (832.5, 442.5),
+        (667.5, 442.5),
+        (600, 375),
+        (600, 302.5)
     ]
+
     vaultBottomLeft = [
-        (341.25, 450.5),
-        (505.75, 450.5),
-        (592, 536.75),
-        (592, 578.75),
-        (505.75, 665),
-        (341.25, 665),
-        (255, 578.75),
-        (255, 536.75)
+        (367.5, 442.5),
+        (532.5, 442.5),
+        (600, 510),
+        (600, 582.5),
+        (532.5, 650),
+        (367.5, 650),
+        (300, 582.5),
+        (300, 510)
     ]
+
     vaultBottomRight = [
-        (694.25, 450.5),
-        (858.75, 450.5),
-        (945, 536.75),
-        (945, 578.75),
-        (858.75, 665),
-        (694.25, 665),
-        (608, 578.75),
-        (608, 536.75)
+        (667.5, 442.5),
+        (832.5, 442.5),
+        (900, 510),
+        (900, 582.5),
+        (832.5, 650),
+        (667.5, 650),
+        (600, 582.5),
+        (600, 510)
     ]
+
     pg.draw.polygon(screen, LIGHT_GREY, vaultTopLeft)
     pg.draw.polygon(screen, LIGHT_GREY, vaultTopRight)
     pg.draw.polygon(screen, LIGHT_GREY, vaultBottomLeft)
     pg.draw.polygon(screen, LIGHT_GREY, vaultBottomRight)
 
+    # thick divider lines
+    pg.draw.line(screen, GREY, (600, 235), (600, 650), 16)# vert
+    pg.draw.line(screen, GREY, (300, 442.5), (900, 442.5), 16)#horz
+
     centreDiamond = [
-        (600, 391.375),
-        (651.125, 442.5),
-        (600, 493.625),
-        (548.875, 442.5)
+        (600, 375),
+        (667.5, 442.5),
+        (600, 510),
+        (532.5, 442.5)
     ]
-    pg.draw.polygon(screen, ACCENT_LIGHTBLUE, centreDiamond)
+    pg.draw.polygon(screen, GREY, centreDiamond)
 
-    pg.draw.line(screen, DARK_GREY, (599, 220), (599, 665), 6)
-    pg.draw.line(screen, DARK_GREY, (255, 442), (945, 442), 6)
-
-    darkerVaultBottom = [
-        (235, SCREEN_HEIGHT - 100),
-        (235, 205.7143),
-        (240, 205.7143),
-        (240, SCREEN_HEIGHT - 120),
-        (SCREEN_WIDTH - 240, SCREEN_HEIGHT - 120),
-        (SCREEN_WIDTH - 240, 205.7143),
-        (SCREEN_WIDTH - 230, 205.7143),
-        (SCREEN_WIDTH - 230, SCREEN_HEIGHT - 100),
-    ]
-    pg.draw.polygon(screen, DARK, darkerVaultBottom)
+    # Thin divider lines
+    pg.draw.line(screen, DARK_GREY, (600, 235), (600, 650), 6)
+    pg.draw.line(screen, DARK_GREY, (300, 442.5), (900, 442.5), 6)
 
 
+    # Thick reinforcement lines
+    pg.draw.line(screen, DARK_GREY, (600, 302.5), (600, 375), 11)#verts
+    pg.draw.line(screen, DARK_GREY, (600, 510), (600, 582.5), 11)
 
-    #TITLE BOX#################################################################
+    pg.draw.line(screen, DARK_GREY, (532.5, 442.5), (365, 442.5), 11)#horz
+    pg.draw.line(screen, DARK_GREY, (667.5, 442.5), (835, 442.5), 11)
+
+    # TITLE BOX ###########################################################
+
     topLightTitleBox = [
         ((SCREEN_WIDTH / 2) - 210, 110),
         ((SCREEN_WIDTH / 2) - 210, 210),
@@ -148,7 +235,7 @@ def draw_home_interior(screen):
         ((SCREEN_WIDTH / 2) + 210, 110)
     ]
     topDarkTitleBox = [
-        ((SCREEN_WIDTH/ 2) - 200 ,120),
+        ((SCREEN_WIDTH / 2) - 200, 120),
         ((SCREEN_WIDTH / 2) - 200, 200),
         ((SCREEN_WIDTH / 2) + 200, 200),
         ((SCREEN_WIDTH / 2) + 200, 120)
@@ -156,112 +243,93 @@ def draw_home_interior(screen):
     pg.draw.polygon(screen, LIGHT_GREY, topLightTitleBox)
     pg.draw.polygon(screen, DARK_GREY, topDarkTitleBox)
 
+    # CONTROL PANELS #####################################################
 
+    # Left panel - Exit
+    exitPanel = [
+        (225, 350),
+        (245, 330),
+        (285, 330),
+        (305, 350),
+        (305, 455),
+        (285, 475),
+        (245, 475),
+        (225, 455)
+    ]
+    pg.draw.polygon(screen, DARK, exitPanel)
+    pg.draw.polygon(screen, GREY, exitPanel, 5)
 
-    #FLOOR############################################################
+    exitButton = [
+        (245, 365),
+        (285, 365),
+        (285, 420),
+        (245, 420)
+    ]
+    pg.draw.polygon(screen, (150, 25, 25), exitButton)
+    pg.draw.rect(screen, (220, 50, 50), (245, 365, 40, 55), 3)
+
+    pg.draw.line(screen, ACCENT_LIGHTBLUE, (252, 437), (278, 437), 4)
+    pg.draw.line(screen, ACCENT_LIGHTBLUE, (252, 448), (278, 448), 4)
+
+    # Right panel - Coin display
+    coinPanel = [
+        (SCREEN_WIDTH - 305, 350),
+        (SCREEN_WIDTH - 285, 330),
+        (SCREEN_WIDTH - 245, 330),
+        (SCREEN_WIDTH - 225, 350),
+        (SCREEN_WIDTH - 225, 455),
+        (SCREEN_WIDTH - 245, 475),
+        (SCREEN_WIDTH - 285, 475),
+        (SCREEN_WIDTH - 305, 455)
+    ]
+    pg.draw.polygon(screen, DARK, coinPanel)
+    pg.draw.polygon(screen, GREY, coinPanel, 5)
+
+    pg.draw.rect(screen, (10, 25, 45), (SCREEN_WIDTH - 290, 365, 70, 55))
+    pg.draw.rect(screen, ACCENT_LIGHTBLUE, (SCREEN_WIDTH - 290, 365, 70, 55), 3)
+
+    pg.draw.circle(screen, (230, 170, 30), (SCREEN_WIDTH - 273, 392), 11)
+    pg.draw.circle(screen, (255, 210, 70), (SCREEN_WIDTH - 273, 392), 8, 2)
+
+    pg.draw.line(screen, ACCENT_LIGHTBLUE, (SCREEN_WIDTH - 280, 438), (SCREEN_WIDTH - 250, 438), 4)
+
+    # FLOOR ###############################################################
+
     bottom_darkPoints = [
         (0, SCREEN_HEIGHT),
-        (230, SCREEN_HEIGHT - 100),
-        (SCREEN_WIDTH - 230, SCREEN_HEIGHT - 100),
+        (300, 650),
+        (SCREEN_WIDTH - 300, 650),
         (SCREEN_WIDTH, SCREEN_HEIGHT)
     ]
-    pg.draw.polygon(screen, DARK_GREY, bottom_darkPoints)  # bottom dark
+    pg.draw.polygon(screen, DARK_GREY, bottom_darkPoints)
 
-    pg.draw.line(screen, GREY, (SCREEN_WIDTH // 2, SCREEN_HEIGHT - 100), (SCREEN_WIDTH // 2, SCREEN_HEIGHT),8)  # middle line
-    pg.draw.line(screen, GREY, (235, 703), (SCREEN_WIDTH - 235, 703), 8) #bottom vault
+    # Horizontal floor strips
+    pg.draw.line(screen, DARK, (205, 700), (SCREEN_WIDTH - 205, 700), 5)
+    pg.draw.line(screen, DARK, (90, 770), (SCREEN_WIDTH - 90, 770), 6)
 
+    # Side floor highlights
     floorLeftHighlight = [
         (0, SCREEN_HEIGHT),
-        (25.080, SCREEN_HEIGHT),
-        (255.080, SCREEN_HEIGHT - 100),
-        (230, SCREEN_HEIGHT - 100),
+        (25, SCREEN_HEIGHT),
+        (325, 650),
+        (300, 650)
     ]
     floorRightHighlight = [
         (SCREEN_WIDTH, SCREEN_HEIGHT),
-        (SCREEN_WIDTH - 25.080, SCREEN_HEIGHT),
-        (SCREEN_WIDTH - 255.080, SCREEN_HEIGHT - 100),
-        (SCREEN_WIDTH - 230, SCREEN_HEIGHT - 100),
+        (SCREEN_WIDTH - 25, SCREEN_HEIGHT),
+        (SCREEN_WIDTH - 325, 650),
+        (SCREEN_WIDTH - 300, 650)
     ]
     pg.draw.polygon(screen, LIGHT_GREY, floorLeftHighlight)
     pg.draw.polygon(screen, LIGHT_GREY, floorRightHighlight)
 
-
-
-
-    #WINDOWS##############################################################
-    greyWindowPointsL = [
-        (0,0),
-        (0, 40),
-        (193.332, 205.7143),
-        (230, SCREEN_HEIGHT - 140),
-        (0, SCREEN_HEIGHT - 40),
-        (0, SCREEN_HEIGHT),
-        (235, SCREEN_HEIGHT - 100),
-        (240, 205.7143),
-    ]
-    greyWindowPointsR = [
-        (SCREEN_WIDTH, 0),
-        (SCREEN_WIDTH, 40),
-        (SCREEN_WIDTH - 193.332, 205.7143),
-        (SCREEN_WIDTH - 230, SCREEN_HEIGHT - 140),
-        (SCREEN_WIDTH - 0, SCREEN_HEIGHT - 40),
-        (SCREEN_WIDTH - 0, SCREEN_HEIGHT),
-        (SCREEN_WIDTH - 235, SCREEN_HEIGHT - 100),
-        (SCREEN_WIDTH - 240, 205.7143),
-    ]
-    pg.draw.polygon(screen, GREY, greyWindowPointsL)
-    pg.draw.polygon(screen, GREY, greyWindowPointsR)
-
-    darkWindowFrameL = [
-        (0, 40),
-        (193.332, 205.7143),
-        (230, 660),
-        (0, 760),
-        (0, 727.287),
-        (198.372, 641.038),
-        (164.424, 220.448),
-        (0, 79.512)
-    ]
-    darkWindowFrameR = [
-        (SCREEN_WIDTH, 40),
-        (SCREEN_WIDTH - 193.332, 205.7143),
-        (SCREEN_WIDTH - 230, 660),
-        (SCREEN_WIDTH, 760),
-        (SCREEN_WIDTH, 727.287),
-        (SCREEN_WIDTH - 198.372, 641.038),
-        (SCREEN_WIDTH - 164.424, 220.448),
-        (SCREEN_WIDTH, 79.512)
-    ]
-    pg.draw.polygon(screen, DARK_GREY, darkWindowFrameL)
-    pg.draw.polygon(screen, DARK_GREY, darkWindowFrameR)
-
-    sideHighlightLVault = [
-        (240, 205.7143),
-        (235, 195),
-        (235, 700),
-        (240, 700)
-    ]
-    sideHighlightRVault = [
-        (SCREEN_WIDTH - 240, 205.7143),
-        (SCREEN_WIDTH - 235, 195),
-        (SCREEN_WIDTH - 235, 700),
-        (SCREEN_WIDTH - 240, 700)
-    ]
-    pg.draw.polygon(screen, LIGHT_GREY, sideHighlightLVault)
-    pg.draw.polygon(screen, LIGHT_GREY, sideHighlightRVault)
-
-    # TOP LEFT BEND
-    pg.draw.line(screen, DARK, (193.332, 205.7143), (164.424, 220.448), 4)
-
-    # BOTTOM LEFT BEND
-    pg.draw.line(screen, DARK, (230, 660), (198.372, 641.038), 4)
-
-    # TOP RIGHT BEND
-    pg.draw.line(screen, DARK, (SCREEN_WIDTH - 193.332, 205.7143), (SCREEN_WIDTH - 164.424, 220.448), 4)
-
-    # BOTTOM RIGHT BEND
-    pg.draw.line(screen, DARK, (SCREEN_WIDTH - 230, 660), (SCREEN_WIDTH - 198.372, 641.038), 4)
-
+    # Floor centre strip
+    pg.draw.polygon(screen, LIGHT_GREY, [
+        (590, 650),
+        (610, 650),
+        (630, SCREEN_HEIGHT),
+        (570, SCREEN_HEIGHT)
+    ])
 def home_draw(screen, mouse_pos, title_font, subtitle_font, text_font):
 
     draw_home_interior(screen) #interior design
@@ -295,7 +363,7 @@ def home_draw(screen, mouse_pos, title_font, subtitle_font, text_font):
         health_colour = ACCENT_PURPLE_HOVER
         health_button_copy = health_button.inflate(-7, -3)
 
-    pg.draw.rect(screen, back_colour, back_but_copy, )
+    pg.draw.rect(screen, back_colour, back_but_copy, border_radius=50)
     pg.draw.rect(screen, ship_colour, ship_but_copy, )
     pg.draw.rect(screen, laser_colour, laser_but_copy, )
     pg.draw.rect(screen, money_colour, money_but_copy, )
@@ -451,6 +519,8 @@ def handle_garage_events(event, buy_buttons, upgrade_data, upgrades, player):
                 selected_category = "laser"
             elif money_button.collidepoint(event.pos):
                 selected_category = "money"
+            elif health_button.collidepoint(event.pos):
+                selected_category = "health"
         else:
             # back button
             if back_button.collidepoint(event.pos):
