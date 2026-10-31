@@ -290,10 +290,10 @@ def draw_home_interior(screen):
 
 
 
-    pg.draw.circle(screen, (230, 170, 30), (SCREEN_WIDTH - 273, 392), 11)
-    pg.draw.circle(screen, (255, 210, 70), (SCREEN_WIDTH - 273, 392), 8, 2)
+    pg.draw.circle(screen, (230, 170, 30), (SCREEN_WIDTH - 265, 438), 11)
+    pg.draw.circle(screen, (255, 210, 70), (SCREEN_WIDTH - 265, 438), 8, 2)
 
-    pg.draw.line(screen, ACCENT_LIGHTBLUE, (SCREEN_WIDTH - 280, 438), (SCREEN_WIDTH - 250, 438), 4)
+    #pg.draw.line(screen, ACCENT_LIGHTBLUE, (SCREEN_WIDTH - 280, 438), (SCREEN_WIDTH - 250, 438), 4)
     pg.draw.line(screen, ACCENT_LIGHTBLUE, (280, 438), (250, 438), 4)
 
     # FLOOR ###############################################################
@@ -333,7 +333,7 @@ def draw_home_interior(screen):
         (630, SCREEN_HEIGHT),
         (570, SCREEN_HEIGHT)
     ])
-def home_draw(screen, mouse_pos, title_font, subtitle_font, text_font):
+def home_draw(screen, mouse_pos, title_font, subtitle_font, text_font, player):
 
     draw_home_interior(screen) #interior design
 
@@ -393,6 +393,12 @@ def home_draw(screen, mouse_pos, title_font, subtitle_font, text_font):
     screen.blit(moneyText, moneyText_rect)
     screen.blit(healthText, healthText_rect)
 
+    coinsOwn_text = text_font.render(f"{player['coins']}", True, ACCENT_YELLOW)
+    coinsRect = pg.Rect(SCREEN_WIDTH - 300, 367.5, 70, 50)
+    coinsOwn_Rect = coinsOwn_text.get_rect(center=coinsRect.center)
+
+    screen.blit(coinsOwn_text, coinsOwn_Rect)
+
 def create_back_button():
     back_button = pg.Rect(0, 0, 150, 50)
     back_button.center = (100, SCREEN_HEIGHT - 75)
@@ -411,12 +417,19 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
     #back button
     back_button_copy = back_button.copy()
 
+    #cois
+    coinsOwn_text = text_font.render(f"Coins = {player['coins']}", True, ACCENT_YELLOW)
+    coinsRect = pg.Rect(60, 20, 70, 50)
+    coinsOwn_Rect = coinsOwn_text.get_rect(center=coinsRect.center)
+
+    screen.blit(coinsOwn_text, coinsOwn_Rect)
+
     backColour = (204, 57, 47)
     if back_button.collidepoint(mouse_pos):
         backColour = (173, 44, 35)
         back_button_copy = back_button.inflate(-3, -1)
 
-    pg.draw.rect(screen, backColour, back_button_copy, border_radius=10)
+    pg.draw.rect(screen, backColour, back_button_copy, )
 
     backText = text_font.render("Back", True, BLACK)
     backText_rect = backText.get_rect(center=back_button.center)
@@ -438,8 +451,8 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
 
         # draw blocks for upgrades to go over
         card_rect = pg.Rect(x, y - 32, 520, 184)
-        pg.draw.rect(screen, PANEL_SCIFI, card_rect, border_radius=12)
-        pg.draw.rect(screen, PANEL_SCIFI_BORDER, card_rect, width=2, border_radius=12)
+        pg.draw.rect(screen, PANEL_SCIFI, card_rect, )
+        pg.draw.rect(screen, PANEL_SCIFI_BORDER, card_rect, width=2, )
 
         nameText = subtitle_font.render(upgrade["name"], True, ACCENT_TURQUOISE)
         nameText_rect = nameText.get_rect(topleft=(x + 40, y))
@@ -478,7 +491,7 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
             buyColour = (40, 180, 80)
             buy_button.inflate_ip(-1, -0.33)
 
-        pg.draw.rect(screen, buyColour, buy_button, border_radius=5)
+        pg.draw.rect(screen, buyColour, buy_button, )
 
         buy_text = text_font.render(buyText, True, BLACK)
         screen.blit(buy_text, buy_text.get_rect(center=buy_button.center))
@@ -497,16 +510,15 @@ def upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrad
     return buy_buttons
 
 
-def draw_garage(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc, player):
+def draw_garage(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, player):
 
     buy_buttons = []
 
     if selected_category == "home":
-        home_draw(screen, mouse_pos, title_font, subtitle_font, text_font)
+        home_draw(screen, mouse_pos, title_font, subtitle_font, text_font, player)
     else:
         buy_buttons = upgrade_page_draw(screen, selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, player)
 
-    garageTextFunc()
 
     return buy_buttons
 

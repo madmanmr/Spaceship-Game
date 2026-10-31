@@ -169,7 +169,7 @@ upgrade_data = {
             "health_regeneration": {
                 "name": "Health Regeneration",
                 "level_key": "healthRegenerationUpgrade",
-                "values": [60, 120, 180, 300, 480],
+                "values": [1, 2, 3, 5, 6],
                 "costs": [100, 250, 400, 600]
             }
         }
@@ -188,6 +188,7 @@ laserDamageCalc = upgrade_data["laser"]["upgrades"]["laser_damage"]["values"][up
 coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["values"][upgrades["coinUpgrade"]]
 
 healthMax = upgrade_data["health"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
+regenCalc = upgrade_data["health"]["upgrades"]["health_regeneration"]["values"][upgrades["healthUpgrade"]]
 
 #level values
 levelDamage = [10, 20, 50, 100, 150, 200]
@@ -230,9 +231,10 @@ def set_level_values():
 #calc vals of upgrades before level starts
 def set_upgrade_values():
     global \
-        healthMax, turnSpeedCalc, thrustCalc, reverseThrustCalc, \
+        turnSpeedCalc, thrustCalc, reverseThrustCalc, \
         laserSpeedCalc, fireRateCalc, laserDamageCalc, \
-        coinRewardMultiplierCalc
+        coinRewardMultiplierCalc, \
+        healthMax, regenCalc
 
     turnSpeedCalc = upgrade_data["ship"]["upgrades"]["turn_speed"]["values"][upgrades["turnSpeedUpgrade"]]
     thrustCalc = upgrade_data["ship"]["upgrades"]["thrust"]["values"][upgrades["thrustUpgrade"]]
@@ -245,6 +247,8 @@ def set_upgrade_values():
     coinRewardMultiplierCalc = upgrade_data["money"]["upgrades"]["coin_reward"]["values"][upgrades["coinUpgrade"]]
 
     healthMax = upgrade_data["health"]["upgrades"]["max_health"]["values"][upgrades["healthUpgrade"]]
+    regenCalc = upgrade_data["health"]["upgrades"]["health_regeneration"]["values"][upgrades["healthRegenerationUpgrade"]]
+
 
 #creat number of asteroids
 def create_asteroids():
@@ -333,7 +337,7 @@ def playingTextFunc():
     level_text = subtitle_font.render(f"{level}", True, WHITE)
     coinsOwn_text = text_font.render(f"Coins: {player["coins"]}", True, ACCENT_YELLOW)
     asteroidsLeft_text = text_font.render(f"Asteroids left: {game["asteroidsLeft"]}", True, WHITE)
-    health_text = text_font.render(f"Health: {player["health"]}", True, WHITE)
+    health_text = text_font.render(f"Health: {round(player['health'])}", True, WHITE)
 
     screen.blit(level_text, ((SCREEN_WIDTH / 2), 20))
     screen.blit(coinsOwn_text, (20, 20))
@@ -341,10 +345,13 @@ def playingTextFunc():
     screen.blit(health_text, (20, 110))
 
 #garage texas
-def garageTextFunc():
-    coinsOwn_text = text_font.render(f"Coins: {player['coins']}", True, ACCENT_YELLOW)
+#def garageTextFunc():
+    #coinsOwn_text = text_font.render(f"{player['coins']}", True, ACCENT_YELLOW)
+    #coinsRect = pg.Rect(SCREEN_WIDTH - 300, 367.5, 70, 50)
+    #coinsOwn_Rect = coinsOwn_text.get_rect(center=coinsRect.center)
 
-    screen.blit(coinsOwn_text, (20, 20))
+
+    #screen.blit(coinsOwn_text, coinsOwn_Rect)
 
 #text when game done
 def gameOverTextFunc():
@@ -490,6 +497,10 @@ def healthmainfunc():
                 state = GAME_OVER
                 lose = True
 
+    if player["health"] < int(healthMax):
+        player["health"] += int(regenCalc) / 60
+
+
 #everything about stars
 def starmainfunc():
     for star in stars:
@@ -549,8 +560,8 @@ def draw_pause():
         exitRectColour = ACCENT_RED_HOVER
         exitRect.inflate_ip(-7, -4)
 
-    pg.draw.rect(screen, ResumeRectColour, resumeRect, border_radius=15)
-    pg.draw.rect(screen, exitRectColour, exitRect, border_radius=15)
+    pg.draw.rect(screen, ResumeRectColour, resumeRect, )
+    pg.draw.rect(screen, exitRectColour, exitRect, )
 
     titleText = title_font.render("GAME PAUSED", True, WHITE)
     title_rect = titleText.get_rect(center=(SCREEN_WIDTH / 2, (SCREEN_HEIGHT / 2) - 150))
@@ -649,7 +660,7 @@ while running:
 
     elif state == GARAGE:
         draw_background(backgroundColourCalc)
-        buy_buttons = garage.draw_garage(screen, garage.selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, garageTextFunc, player)
+        buy_buttons = garage.draw_garage(screen, garage.selected_category, mouse_pos, upgrade_data, upgrades, title_font, subtitle_font, text_font, player)
 
     elif state == PLAYING:
         if game["pause"] == False:

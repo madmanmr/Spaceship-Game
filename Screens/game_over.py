@@ -28,8 +28,8 @@ def draw_game_over(screen, mouse_pos, text_font, gameOverTextFunc):
         menu_colour = (40, 180, 80)
         menu_copy_but = MenuBut.inflate(-7, -3)
 
-    pg.draw.rect(screen, new_game_colour, new_game_copy_but, border_radius=15)
-    pg.draw.rect(screen, menu_colour, menu_copy_but, border_radius=15)
+    pg.draw.rect(screen, new_game_colour, new_game_copy_but, )
+    pg.draw.rect(screen, menu_colour, menu_copy_but, )
 
     new_text = text_font.render("New Game", True, BLACK)
     menu_text = text_font.render("Menu", True, BLACK)

@@ -29,7 +29,7 @@ def draw_game(screen, ship, asteroids, lasers, playingTextFunc, mouse_pos, text_
         pauseColour = (173, 44, 35)
         pauseBut_copy = pauseBut.inflate(-3, -1)
 
-    pg.draw.rect(screen, pauseColour, pauseBut_copy, border_radius=10)
+    pg.draw.rect(screen, pauseColour, pauseBut_copy, )
 
     pauseText = text_font.render("PAUSE", True, WHITE)
     pauseRect = pauseText.get_rect(center=pauseBut_copy.center)
